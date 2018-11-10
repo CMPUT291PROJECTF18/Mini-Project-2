@@ -41,5 +41,6 @@ jobs:
         - python setup.py sdist
     - stage: deploy
       name: "docs"
+      python: 3.6
       script:
         - sphinx-build docs/ build/
