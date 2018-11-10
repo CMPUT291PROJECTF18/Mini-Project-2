@@ -7,7 +7,7 @@ mini-project-2
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/mini-project-2/badge/?version=latest
-    :target: https://mini-project-2.readthedocs.io/en/latest/?badge=latest
+    :target: https://CMPUT291PROJECTF18-mini-project-2.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 
