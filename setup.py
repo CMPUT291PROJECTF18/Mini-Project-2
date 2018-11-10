@@ -47,14 +47,14 @@ class PyTest(test):
 
 
 setup(
-    name="mini_project_2",
+    name="mini-project-2",
     version=VERSION,
     description="CMPUT 291 Mini-Project 2",
     long_description=open("README.rst").read(),
     keywords="cmput291 project university",
     author="Nathan Klapstein, Thomas Lorincz",
     author_email="nklapste@ualberta.ca",
-    url="https://github.com/CMPUT291PROJECTF18/mini_project_2",
+    url="https://github.com/CMPUT291PROJECTF18/Mini-Project-2",
     license="MIT License",
     packages=find_packages(),
     include_package_data=True,
