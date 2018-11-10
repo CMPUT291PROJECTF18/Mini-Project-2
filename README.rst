@@ -10,6 +10,9 @@ mini-project-2
     :target: https://CMPUT291PROJECTF18-mini-project-2.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://codecov.io/gh/CMPUT291PROJECTF18/Mini-Project-2/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/severb/graypy
+    :alt: Code Coverage
 
 Requirements
 ============
