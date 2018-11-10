@@ -14,6 +14,7 @@ mini-project-2
     :target: https://codecov.io/gh/severb/graypy
     :alt: Code Coverage
 
+
 Requirements
 ============
 
