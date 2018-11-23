@@ -64,6 +64,8 @@ setup(
         ]
     },
     install_requires=[
+        "beautifulsoup4",
+        "lxml"
     ],
     extras_require={
         "docs": [
