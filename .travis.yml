@@ -1,0 +1,46 @@
+language: python
+
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+
+before_install:
+  - pip install codecov
+
+
+install:
+  - pip install .["docs","tests"]
+
+
+script:
+  - python setup.py test
+
+
+after_success:
+  - codecov
+
+
+jobs:
+  include:
+    - python: pypy3
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
+      dist: xenial
+    - stage: lint
+      python: 3.6
+      script:
+        - python setup.py lint || exit $(($? & 35))
+    - stage: build
+      python: 3.6
+      script:
+        - python setup.py sdist
+    - stage: deploy
+      name: "docs"
+      python: 3.6
+      script:
+        - sphinx-build docs/ build/
