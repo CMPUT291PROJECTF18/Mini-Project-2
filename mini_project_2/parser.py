@@ -19,21 +19,17 @@ def parse_terms(xml_string):
         aid = ad.find("aid").text
 
         titles = ad.find("ti").text
-        titles = re.sub("'", "", titles)
-        titles = re.sub("\"", "", titles)
-        titles = re.sub("&", "", titles)
+        titles = re.sub("['\"&]", "", titles)
 
         for title in re.split("(?!-)\W", titles):
-            if len(title) > 2 and re.match("^[0-9a-zA-Z_\-]*$", title, re.M):
+            if len(title) > 2 and re.match("^[0-9a-zA-Z_\-]*$", title, 0):
                 terms.append(title.lower() + ":" + aid)
 
         descriptions = ad.find("desc").text
-        descriptions = re.sub("'", "", descriptions)
-        descriptions = re.sub("\"", "", descriptions)
-        descriptions = re.sub("&", "", descriptions)
+        descriptions = re.sub("['\"&]", "", descriptions)
 
         for desc in re.split("(?!-)\W", descriptions):
-            if len(desc) > 2 and re.match("^[0-9a-zA-Z_\-]*$", desc, re.M):
+            if len(desc) > 2 and re.match("^[0-9a-zA-Z_\-]*$", desc, 0):
                 terms.append(desc.lower() + ":" + aid)
 
     term_string = ""
