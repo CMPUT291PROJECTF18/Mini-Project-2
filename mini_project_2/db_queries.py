@@ -20,9 +20,16 @@ class QueryEngine:
         """Initialize a query engine by providing paths to the ads, terms,
          pdates, and prices indexes"""
         self.ads = bsddb3.hashopen(ads)
+        __log__.debug("loaded ads index: {}".format(self.ads))
+
         self.terms = bsddb3.btopen(terms)
+        __log__.debug("loaded terms index: {}".format(self.terms))
+
         self.pdates = bsddb3.btopen(pdates)
+        __log__.debug("loaded pdates index: {}".format(self.pdates))
+
         self.prices = bsddb3.btopen(prices)
+        __log__.debug("loaded prices index: {}".format(self.prices))
 
         if output == "full":
             self.full_output = True
