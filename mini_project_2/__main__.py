@@ -4,6 +4,7 @@
 """argparse and entry point script for mini-project-2"""
 
 import argparse
+import datetime
 import os
 import sys
 import logging
@@ -15,6 +16,43 @@ from mini_project_2.db_queries import QueryEngine
 __log__ = getLogger(__name__)
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+
+
+def term_alpha_numeric(term_alpha_numeric_string: str):
+    """Argparse type function for term ``alphaNumeric`` query type"""
+    if term_alpha_numeric_string:
+        if term_alpha_numeric_string.endswith("%"):
+            return alpha_numeric(term_alpha_numeric_string[:-1])
+        else:
+            return alpha_numeric(term_alpha_numeric_string)
+    else:
+        raise argparse.ArgumentTypeError("invalid term alphaNumeric string")
+
+
+def alpha_numeric(alpha_numeric_string: str):
+    """Argparse type function for ``alphaNumeric`` query type"""
+    if alpha_numeric_string and alpha_numeric_string.isalnum():
+        return alpha_numeric_string
+    else:
+        raise argparse.ArgumentTypeError("invalid alphaNumeric string")
+
+
+def date(date_string: str):
+    """Argparse type function for ``date`` query type
+
+    :return: :class:`datetime.datetime` object parsed from the ``date_string``
+    """
+    try:
+        year, month, day = date_string.split("/")
+        return datetime.datetime(
+            year=int(year),
+            month=int(month),
+            day=int(day)
+        )
+    except Exception:
+        raise argparse.ArgumentTypeError(
+            "invalid date string please follow: 'YYYY/MM/DD"
+        )
 
 
 def log_level(log_level_string: str):
@@ -33,6 +71,8 @@ def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Start mini-project-2"
     )
+    parser.add_argument("-o", "--output", choices=["full", "brief"],
+                        help="Specify the query output format")
 
     group = parser.add_argument_group(title="Logging")
     group.add_argument("--log-level", dest="log_level", default="INFO",
@@ -68,11 +108,29 @@ def get_parser() -> argparse.ArgumentParser:
                             "file for the data contained in "
                             "``prices.txt``")
 
-    group = parser.add_argument_group(title="Query")
-    group.add_argument("-q", "--query", required=True,
-                       help="The Query string to process")
-    group.add_argument("-o", "--output", choices=["full", "brief"],
-                       help="Specify the output format")
+    # add the query sub-commands
+    subparsers = parser.add_subparsers(help="Query Command", dest="query")
+    date_query_parser = subparsers.add_parser("date")
+    date_query_parser.add_argument(dest="equator",
+                                   choices=["=", ">", "<", ">=", "<="])
+    date_query_parser.add_argument(dest="date", type=date)
+
+    price_query_parser = subparsers.add_parser("price")
+    price_query_parser.add_argument(dest="equator",
+                                    choices=["=", ">", "<", ">=", "<="])
+    price_query_parser.add_argument(dest="price", type=float)
+
+    location_query_parser = subparsers.add_parser("location")
+    location_query_parser.add_argument(dest="equator", choices=["="])
+    location_query_parser.add_argument(dest="location", type=alpha_numeric)
+
+    cat_query_parser = subparsers.add_parser("cat")
+    cat_query_parser.add_argument(dest="equator", choices=["="])
+    cat_query_parser.add_argument(dest="cat", type=alpha_numeric)
+
+    term_query_parser = subparsers.add_parser("term")
+    term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
+
     return parser
 
 
@@ -111,7 +169,6 @@ def main(argv=sys.argv[1:]) -> int:
         args.prices_index,
         args.output
     )
-    query_engine.run_query(args.query)
     return 0
 
 
