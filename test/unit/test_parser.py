@@ -76,3 +76,27 @@ def test_parse_prices_1000():
         expected_string = expected.read()
 
     assert price_string == expected_string
+
+
+def test_parse_ads_10():
+    with open("../data/10.xml", "r") as data:
+        data_string = data.read()
+
+    ad_string = parser.parse_ads(data_string)
+
+    with open("../data/ads_expected_10.txt", "r") as data:
+        expected_string = data.read()
+
+    assert ad_string == expected_string
+
+
+def test_parse_ads_1000():
+    with open("../data/1000.xml", "r") as data:
+        data_string = data.read()
+
+    ad_string = parser.parse_ads(data_string)
+
+    with open("../data/ads_expected_1000.txt", "r") as data:
+        expected_string = data.read()
+
+    assert ad_string == expected_string

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import html
 import re
 import xml.etree.ElementTree as ElementTree
 
@@ -15,6 +16,9 @@ def parse(xml_string):
     price_string = parse_prices(xml_string)
     create_prices_file(price_string)
 
+    ad_string = parse_ads(xml_string)
+    create_ads_file(ad_string)
+
 
 def parse_terms(xml_string):
     terms = list()
@@ -28,15 +32,15 @@ def parse_terms(xml_string):
         title = ad.find("ti").text
         title = re.sub("['\"]", "", title)
 
-        for token in re.split("(?!-)\W", title):
-            if len(token) > 2 and re.match("^[0-9a-zA-Z_\-]*$", token, 0):
+        for token in re.split(r"(?!-)\W", title):
+            if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
                 terms.append(token.lower() + ":" + aid)
 
         description = ad.find("desc").text
         description = re.sub("['\"]", "", description)
 
-        for token in re.split("(?!-)\W", description):
-            if len(token) > 2 and re.match("^[0-9a-zA-Z_\-]*$", token, 0):
+        for token in re.split(r"(?!-)\W", description):
+            if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
                 terms.append(token.lower() + ":" + aid)
 
     term_string = ""
@@ -107,5 +111,33 @@ def parse_prices(xml_string):
 
 
 def create_prices_file(price_string):
+    # TODO: Implement
+    return
+
+
+def parse_ads(xml_string):
+    ads = list()
+
+    elem = ElementTree.fromstring(xml_string)
+    root = ElementTree.ElementTree(elem).getroot()
+
+    for ad in root.findall("ad"):
+        aid = ad.find("aid").text
+        ads.append(aid + ":")
+
+    for i, ad_xml in enumerate(re.findall("<ad>.*</ad>", xml_string)):
+        ads[i] += ad_xml
+
+    ad_string = ""
+    for i, ad in enumerate(ads):
+        if i == len(ads) - 1:
+            ad_string += ad
+        else:
+            ad_string += (ad + "\n")
+
+    return ad_string
+
+
+def create_ads_file(ad_string):
     # TODO: Implement
     return
