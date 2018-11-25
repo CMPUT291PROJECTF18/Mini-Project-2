@@ -52,3 +52,27 @@ def test_parse_pdates_1000():
         expected_string = expected.read()
 
     assert pdate_string == expected_string
+
+
+def test_parse_prices_10():
+    with open("../data/10.xml", "r") as data:
+        data_string = data.read()
+
+    price_string = parser.parse_prices(data_string)
+
+    with open("../data/prices_expected_10.txt", "r") as expected:
+        expected_string = expected.read()
+
+    assert price_string == expected_string
+
+
+def test_parse_prices_1000():
+    with open("../data/1000.xml", "r") as data:
+        data_string = data.read()
+
+    price_string = parser.parse_prices(data_string)
+
+    with open("../data/prices_expected_1000.txt", "r") as expected:
+        expected_string = expected.read()
+
+    assert price_string == expected_string

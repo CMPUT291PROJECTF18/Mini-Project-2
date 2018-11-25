@@ -8,8 +8,12 @@ import xml.etree.ElementTree as ElementTree
 def parse(xml_string):
     term_string = parse_terms(xml_string)
     create_terms_file(term_string)
+
     pdate_string = parse_pdates(xml_string)
     create_pdates_file(pdate_string)
+
+    price_string = parse_prices(xml_string)
+    create_prices_file(price_string)
 
 
 def parse_terms(xml_string):
@@ -17,6 +21,7 @@ def parse_terms(xml_string):
 
     elem = ElementTree.fromstring(xml_string)
     root = ElementTree.ElementTree(elem).getroot()
+
     for ad in root.findall("ad"):
         aid = ad.find("aid").text
 
@@ -63,15 +68,44 @@ def parse_pdates(xml_string):
         pdates.append(date + ":" + aid + "," + category + "," + location)
 
     pdate_string = ""
-    for i, term in enumerate(pdates):
+    for i, pdate in enumerate(pdates):
         if i == len(pdates) - 1:
-            pdate_string += term
+            pdate_string += pdate
         else:
-            pdate_string += (term + "\n")
+            pdate_string += (pdate + "\n")
 
     return pdate_string
 
 
 def create_pdates_file(pdate_string):
+    # TODO: Implement
+    return
+
+
+def parse_prices(xml_string):
+    prices = list()
+
+    elem = ElementTree.fromstring(xml_string)
+    root = ElementTree.ElementTree(elem).getroot()
+
+    for ad in root.findall("ad"):
+        price = ad.find("price").text
+        if len(price):
+            aid = ad.find("aid").text
+            category = ad.find("cat").text
+            location = ad.find("loc").text
+            prices.append(price + ":" + aid + "," + category + "," + location)
+
+    price_string = ""
+    for i, price in enumerate(prices):
+        if i == len(prices) - 1:
+            price_string += price
+        else:
+            price_string += (price + "\n")
+
+    return price_string
+
+
+def create_prices_file(price_string):
     # TODO: Implement
     return
