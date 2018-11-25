@@ -42,21 +42,22 @@ class QueryEngine:
     def run_term_query(self, term: str):
         """Print and return all records that have the term as a work within
         the title or description fields"""
-        __log__.info("running term query: term: {}".format(term))
+        __log__.info("starting term query: term: {}".format(term))
         if term.endswith("%"):
             __log__.debug("wildcard detected in term: {}".format(term))
             base_term = term[:-1]
-            # TODO handle wildcard
-            matching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}*".format(base_term), key.decode("utf-8"))))
-            __log__.debug("found matching wild card keys: {}".format(matching_terms))
+            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA=Z0-9]*".format(base_term), key.decode("utf-8"))))
         else:
-            matching_terms = [term]
-        for term in matching_terms:
+            searching_terms = [term]
+
+        __log__.info("running term query: searching_terms: {}".format(searching_terms))
+        for term in searching_terms:
             term = bytes(term, "utf-8")
-            # TODO:
             if self.terms.has_key(term):
                 ad_id = self.terms[term]
-                __log__.info("found matching aid: {} ad: {}".format(ad_id, self.ads[ad_id]))
+                __log__.info("found matching term: {} aid: {} ad: {}".format(term, ad_id, self.ads[ad_id]))
+                # TODO allow subqueries to access this data
+
 
     def run_cat_query(self, cat: str):
         __log__.info("running cat query: cat: {}".format(cat))
