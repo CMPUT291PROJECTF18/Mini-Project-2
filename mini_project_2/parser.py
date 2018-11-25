@@ -53,8 +53,8 @@ def parse_terms(xml_string):
 
 
 def create_terms_file(term_string):
-    # TODO: Implement
-    return
+    with open("terms.txt", "w") as terms_file:
+        terms_file.write(term_string)
 
 
 def parse_pdates(xml_string):
@@ -81,8 +81,8 @@ def parse_pdates(xml_string):
 
 
 def create_pdates_file(pdate_string):
-    # TODO: Implement
-    return
+    with open("pdates.txt", "w") as pdates_file:
+        pdates_file.write(pdate_string)
 
 
 def parse_prices(xml_string):
@@ -110,8 +110,8 @@ def parse_prices(xml_string):
 
 
 def create_prices_file(price_string):
-    # TODO: Implement
-    return
+    with open("prices.txt", "w") as prices_file:
+        prices_file.write(price_string)
 
 
 def parse_ads(xml_string):
@@ -138,5 +138,5 @@ def parse_ads(xml_string):
 
 
 def create_ads_file(ad_string):
-    # TODO: Implement
-    return
+    with open("ads.txt", "w") as ads_file:
+        ads_file.write(ad_string)
