@@ -11,9 +11,14 @@ __log__ = getLogger(__name__)
 
 
 class QueryEngine:
+    """Query processing engine class for part3
+
+    This loads and interacts with 4 Berkeley Database indexes.
+    """
+
     def __init__(self, ads, terms, pdates, prices, output="brief"):
-        """Initialize a query engine by providing paths to
-        the ads, terms, pdates, and prices indexes"""
+        """Initialize a query engine by providing paths to the ads, terms,
+         pdates, and prices indexes"""
         self.ads = bsddb3.hashopen(ads)
         self.terms = bsddb3.btopen(terms)
         self.pdates = bsddb3.btopen(pdates)

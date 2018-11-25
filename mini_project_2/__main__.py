@@ -47,29 +47,29 @@ def get_parser() -> argparse.ArgumentParser:
     group.add_argument("-ad", "--ads-index", dest="ads_index",
                        required=True,
                        help="Path to the ``ad.idx`` file. "
-                            "Noting a Berkely database hashed index "
+                            "Noting a Berkeley database hashed index "
                             "file for the data contained in ``ads.txt``")
     group.add_argument("-te", "--terms-index", dest="terms_index",
                        required=True,
                        help="Path to the ``te.idx`` file. "
-                            "Noting a Berkely database B+-tree index "
+                            "Noting a Berkeley database B+-tree index "
                             "file for the data contained in "
                             "``terms.txt``")
     group.add_argument("-da", "--pdates-index", dest="pdates_index",
                        required=True,
                        help="Path to the ``da.idx`` file. "
-                            "Noting a Berkely database B+-tree index "
+                            "Noting a Berkeley database B+-tree index "
                             "file for the data contained in "
                             "``pdates.txt``")
     group.add_argument("-pr", "--prices-index", dest="prices_index",
                        required=True,
                        help="Path to the ``pr.idx`` file. "
-                            "Noting a Berkely database B+-tree index "
+                            "Noting a Berkeley database B+-tree index "
                             "file for the data contained in "
                             "``prices.txt``")
 
     group = parser.add_argument_group(title="Query")
-    group.add_argument("-q", "--query",  required=True,
+    group.add_argument("-q", "--query", required=True,
                        help="The Query string to process")
     group.add_argument("-o", "--output", choices=["full", "brief"],
                        help="Specify the output format")
