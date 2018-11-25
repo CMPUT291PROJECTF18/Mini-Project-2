@@ -21,6 +21,7 @@ operators = {
 
 }
 
+
 def parse_date(date_string: str):
     """Argparse type function for ``date`` query type
 
