@@ -22,7 +22,7 @@ def term_alpha_numeric(term_alpha_numeric_string: str):
     """Argparse type function for term ``alphaNumeric`` query type"""
     if term_alpha_numeric_string:
         if term_alpha_numeric_string.endswith("%"):
-            return alpha_numeric(term_alpha_numeric_string[:-1])
+            return alpha_numeric(term_alpha_numeric_string[:-1]) + "%"
         else:
             return alpha_numeric(term_alpha_numeric_string)
     else:
@@ -175,6 +175,14 @@ def main(argv=sys.argv[1:]) -> int:
     # TODO: handle multiple queries needs restructuring
     if args.query == "cat":
         query_engine.run_cat_query(args.cat)
+    if args.query == "term":
+        query_engine.run_term_query(args.term)
+    if args.query == "date":
+        query_engine.run_date_query(args.date, args.equator)
+    if args.query == "location":
+        query_engine.run_location_query(args.location)
+    if args.query == "price":
+        query_engine.run_price_query(args.price, args.equator)
 
     return 0
 

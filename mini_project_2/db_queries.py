@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Database querying engine for part3"""
-
+import re
 from logging import getLogger
 
 import bsddb3
@@ -40,11 +40,23 @@ class QueryEngine:
 
     # TODO: we need the ability to run a query after a query and filter through results
     def run_term_query(self, term: str):
+        """Print and return all records that have the term as a work within
+        the title or description fields"""
         __log__.info("running term query: term: {}".format(term))
         if term.endswith("%"):
             __log__.debug("wildcard detected in term: {}".format(term))
+            base_term = term[:-1]
             # TODO handle wildcard
-        # TODO:
+            matching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}*".format(base_term), key.decode("utf-8"))))
+            __log__.debug("found matching wild card keys: {}".format(matching_terms))
+        else:
+            matching_terms = [term]
+        for term in matching_terms:
+            term = bytes(term, "utf-8")
+            # TODO:
+            if self.terms.has_key(term):
+                ad_id = self.terms[term]
+                __log__.info("found matching aid: {} ad: {}".format(ad_id, self.ads[ad_id]))
 
     def run_cat_query(self, cat: str):
         __log__.info("running cat query: cat: {}".format(cat))
