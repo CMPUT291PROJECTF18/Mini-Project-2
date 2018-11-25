@@ -6,13 +6,25 @@
 import mini_project_2.parser as parser
 
 
-def test_parse_terms():
+def test_parse_terms_10():
     with open("../data/10.xml", "r") as data:
         data_string = data.read()
 
     term_string = parser.parse_terms(data_string)
 
     with open("../data/10_expected.txt", "r") as expected:
+        expected_string = expected.read()
+
+    assert term_string == expected_string
+
+
+def test_parse_terms_1000():
+    with open("../data/1000.xml", "r") as data:
+        data_string = data.read()
+
+    term_string = parser.parse_terms(data_string)
+
+    with open("../data/1000_expected.txt", "r") as expected:
         expected_string = expected.read()
 
     assert term_string == expected_string
