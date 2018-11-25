@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import html
 import re
 import xml.etree.ElementTree as ElementTree
 
