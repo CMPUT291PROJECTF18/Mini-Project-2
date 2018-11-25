@@ -41,6 +41,27 @@ def get_parser() -> argparse.ArgumentParser:
     group.add_argument("-v", "--verbose", action="store_true",
                        help="Enable verbose logging")
 
+    group = parser.add_argument_group(title="Database")
+    group.add_argument("--ad", required=True,
+                       help="Path to the ``ad.idx`` file. "
+                            "Noting a Berkely database hashed index "
+                            "file for the data contained in ``ads.txt``")
+    group.add_argument("--te", required=True,
+                       help="Path to the ``te.idx`` file. "
+                            "Noting a Berkely database B+-tree index "
+                            "file for the data contained in "
+                            "``terms.txt``")
+    group.add_argument("--da", required=True,
+                       help="Path to the ``da.idx`` file. "
+                            "Noting a Berkely database B+-tree index "
+                            "file for the data contained in "
+                            "``pdates.txt``")
+    group.add_argument("--pr", required=True,
+                       help="Path to the ``pr.idx`` file. "
+                            "Noting a Berkely database B+-tree index "
+                            "file for the data contained in "
+                            "``prices.txt``")
+
     return parser
 
 
