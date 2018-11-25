@@ -8,13 +8,15 @@ import os
 
 
 def test_parse_terms_10():
-    file = os.path.join(os.getcwd(), "../data/10.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/10.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     term_string = parser.parse_terms(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/terms_expected_10.txt")
+    file = os.path.join(dir_path, "../data/terms_expected_10.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -22,13 +24,15 @@ def test_parse_terms_10():
 
 
 def test_parse_terms_1000():
-    file = os.path.join(os.getcwd(), "../data/1000.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/1000.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     term_string = parser.parse_terms(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/terms_expected_1000.txt")
+    file = os.path.join(dir_path, "../data/terms_expected_1000.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -36,13 +40,15 @@ def test_parse_terms_1000():
 
 
 def test_parse_pdates_10():
-    file = os.path.join(os.getcwd(), "../data/10.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/10.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     pdate_string = parser.parse_pdates(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/pdates_expected_10.txt")
+    file = os.path.join(dir_path, "../data/pdates_expected_10.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -50,13 +56,15 @@ def test_parse_pdates_10():
 
 
 def test_parse_pdates_1000():
-    file = os.path.join(os.getcwd(), "../data/1000.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/1000.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     pdate_string = parser.parse_pdates(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/pdates_expected_1000.txt")
+    file = os.path.join(dir_path, "../data/pdates_expected_1000.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -64,13 +72,15 @@ def test_parse_pdates_1000():
 
 
 def test_parse_prices_10():
-    file = os.path.join(os.getcwd(), "../data/10.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/10.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     price_string = parser.parse_prices(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/prices_expected_10.txt")
+    file = os.path.join(dir_path, "../data/prices_expected_10.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -78,13 +88,15 @@ def test_parse_prices_10():
 
 
 def test_parse_prices_1000():
-    file = os.path.join(os.getcwd(), "../data/1000.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/1000.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     price_string = parser.parse_prices(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/prices_expected_1000.txt")
+    file = os.path.join(dir_path, "../data/prices_expected_1000.txt")
     with open(file, "r") as expected:
         expected_string = expected.read()
 
@@ -92,13 +104,15 @@ def test_parse_prices_1000():
 
 
 def test_parse_ads_10():
-    file = os.path.join(os.getcwd(), "../data/10.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/10.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     ad_string = parser.parse_ads(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/ads_expected_10.txt")
+    file = os.path.join(dir_path, "../data/ads_expected_10.txt")
     with open(file, "r") as data:
         expected_string = data.read()
 
@@ -106,13 +120,15 @@ def test_parse_ads_10():
 
 
 def test_parse_ads_1000():
-    file = os.path.join(os.getcwd(), "../data/1000.xml")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    file = os.path.join(dir_path, "../data/1000.xml")
     with open(file, "r") as data:
         data_string = data.read()
 
     ad_string = parser.parse_ads(data_string)
 
-    file = os.path.join(os.getcwd(), "../data/ads_expected_1000.txt")
+    file = os.path.join(dir_path, "../data/ads_expected_1000.txt")
     with open(file, "r") as data:
         expected_string = data.read()
 
