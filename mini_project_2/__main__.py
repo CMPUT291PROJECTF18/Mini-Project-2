@@ -11,7 +11,7 @@ import logging
 from logging import getLogger, basicConfig, Formatter
 from logging.handlers import TimedRotatingFileHandler
 
-from mini_project_2.db_queries import QueryEngine
+from mini_project_2.db_queries import QueryEngine, parse_date
 
 __log__ = getLogger(__name__)
 
@@ -43,12 +43,7 @@ def date(date_string: str):
     :return: :class:`datetime.datetime` object parsed from the ``date_string``
     """
     try:
-        year, month, day = date_string.split("/")
-        return datetime.datetime(
-            year=int(year),
-            month=int(month),
-            day=int(day)
-        )
+        return parse_date(date_string)
     except Exception:
         raise argparse.ArgumentTypeError(
             "invalid date string please follow: 'YYYY/MM/DD"

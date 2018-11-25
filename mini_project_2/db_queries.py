@@ -2,12 +2,41 @@
 # -*- coding: utf-8 -*-
 
 """Database querying engine for part3"""
+import datetime
 import re
 from logging import getLogger
 
 import bsddb3
 
 __log__ = getLogger(__name__)
+
+import operator
+
+equators = {
+    ">": operator.gt,
+    "<": operator.lt,
+    "=": operator.eq,
+    ">=": operator.ge,
+    "<=": operator.le,
+
+}
+
+def parse_date(date_string: str):
+    """Argparse type function for ``date`` query type
+
+    :return: :class:`datetime.datetime` object parsed from the ``date_string``
+    """
+    try:
+        year, month, day = date_string.split("/")
+        return datetime.datetime(
+            year=int(year),
+            month=int(month),
+            day=int(day)
+        )
+    except Exception:
+        raise ValueError(
+            "invalid date string please follow: 'YYYY/MM/DD"
+        )
 
 
 class QueryEngine:
@@ -51,11 +80,11 @@ class QueryEngine:
             searching_terms = [term]
 
         __log__.info("running term query: searching_terms: {}".format(searching_terms))
-        for term in searching_terms:
-            term = bytes(term, "utf-8")
-            if self.terms.has_key(term):
-                ad_id = self.terms[term]
-                __log__.info("found matching term: {} aid: {} ad: {}".format(term, ad_id, self.ads[ad_id]))
+        for search_term in searching_terms:
+            search_term = bytes(search_term, "utf-8")
+            if self.terms.has_key(search_term):
+                ad_id = self.terms[search_term]
+                __log__.info("found matching term: searching_term:{} aid: {} ad: {}".format(search_term, ad_id, self.ads[ad_id]))
                 # TODO allow subqueries to access this data
 
 
@@ -67,10 +96,22 @@ class QueryEngine:
         __log__.info("running location query: location: {}".format(location))
         # TODO:
 
-    def run_price_query(self, price: str, equator):
+    def run_price_query(self, price: float, equator):
         __log__.info("running price query: price: {} equator: {}".format(price, equator))
-        # TODO:
+        for price_str, data in self.prices.items():
+            price_str = price_str.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_price = float(price_str)
+            if equators[equator](price, db_price):
+                __log__.info("found valid price: {} data: {}".format(price_str, data_str))
+                # TODO allow subqueries to access this data
 
-    def run_date_query(self, date: str, equator):
-        # TODO:
-        __log__.info("running date query: date: {} equator: {}".format(date, equator))
+    def run_date_query(self, date: datetime.datetime, equator):
+        __log__.info("starting date query: date: {} equator: {}".format(date, equator))
+        for date_str, data in self.pdates.items():
+            date_str = date_str.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_date = parse_date(date_str)
+            if equators[equator](date, db_date):
+                __log__.info("found valid date: {} data: {}".format(date_str, data_str))
+                # TODO allow subqueries to access this data
