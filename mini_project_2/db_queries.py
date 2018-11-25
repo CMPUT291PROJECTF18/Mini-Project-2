@@ -28,7 +28,5 @@ class QueryEngine:
 
     def run_query(self, query):
         """Run the given query"""
-        __log__.info(
-            "running query: {} full_output: {}".format(query, self.full_output)
-        )
+        __log__.info("running query: {}".format(query))
         # TODO: execute query

@@ -44,30 +44,34 @@ def get_parser() -> argparse.ArgumentParser:
                        help="Enable verbose logging")
 
     group = parser.add_argument_group(title="Database")
-    group.add_argument("--ad", required=True,
+    group.add_argument("-ad", "--ads-index", dest="ads_index",
+                       required=True,
                        help="Path to the ``ad.idx`` file. "
                             "Noting a Berkely database hashed index "
                             "file for the data contained in ``ads.txt``")
-    group.add_argument("--te", required=True,
+    group.add_argument("-te", "--terms-index", dest="terms_index",
+                       required=True,
                        help="Path to the ``te.idx`` file. "
                             "Noting a Berkely database B+-tree index "
                             "file for the data contained in "
                             "``terms.txt``")
-    group.add_argument("--da", required=True,
+    group.add_argument("-da", "--pdates-index", dest="pdates_index",
+                       required=True,
                        help="Path to the ``da.idx`` file. "
                             "Noting a Berkely database B+-tree index "
                             "file for the data contained in "
                             "``pdates.txt``")
-    group.add_argument("--pr", required=True,
+    group.add_argument("-pr", "--prices-index", dest="prices_index",
+                       required=True,
                        help="Path to the ``pr.idx`` file. "
                             "Noting a Berkely database B+-tree index "
                             "file for the data contained in "
                             "``prices.txt``")
 
     group = parser.add_argument_group(title="Query")
-    group.add_argument("--q", required=True,
+    group.add_argument("-q", "--query",  required=True,
                        help="The Query string to process")
-    group.add_argument("--output", choices=["full", "brief"],
+    group.add_argument("-o", "--output", choices=["full", "brief"],
                        help="Specify the output format")
     return parser
 
@@ -100,7 +104,13 @@ def main(argv=sys.argv[1:]) -> int:
         level=args.log_level
     )
 
-    query_engine = QueryEngine(args.ad, args.te, args.da, args.pr, args.output)
+    query_engine = QueryEngine(
+        args.ads_index,
+        args.terms_index,
+        args.pdates_index,
+        args.prices_index,
+        args.output
+    )
     query_engine.run_query(args.query)
     return 0
 
