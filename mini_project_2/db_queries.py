@@ -12,7 +12,7 @@ __log__ = getLogger(__name__)
 
 import operator
 
-equators = {
+operators = {
     ">": operator.gt,
     "<": operator.lt,
     "=": operator.eq,
@@ -68,50 +68,140 @@ class QueryEngine:
             raise ValueError("Invalid argument for output: {}".format(output))
 
     # TODO: we need the ability to run a query after a query and filter through results
-    def run_term_query(self, term: str):
-        """Print and return all records that have the term as a work within
+    def run_term_query(self, search_term: str):
+        """Print and return all records that have the search_term as a work within
         the title or description fields"""
-        __log__.info("starting term query: term: {}".format(term))
-        if term.endswith("%"):
-            __log__.debug("wildcard detected in term: {}".format(term))
-            base_term = term[:-1]
+        __log__.info("starting term query: search_term: {}".format(search_term))
+        if search_term.endswith("%"):
+            __log__.debug("wildcard detected in search_term: {}".format(search_term))
+            base_term = search_term[:-1]
             searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA=Z0-9]*".format(base_term), key.decode("utf-8"))))
         else:
-            searching_terms = [term]
+            searching_terms = [search_term]
 
-        __log__.info("running term query: searching_terms: {}".format(searching_terms))
+        __log__.info("running search_term query: searching_terms: {}".format(searching_terms))
         for search_term in searching_terms:
             search_term = bytes(search_term, "utf-8")
             if self.terms.has_key(search_term):
                 ad_id = self.terms[search_term]
-                __log__.info("found matching term: searching_term:{} aid: {} ad: {}".format(search_term, ad_id, self.ads[ad_id]))
+                __log__.info("found matching term: searching_term:{} aid: {} ad: {}".format(search_term, ad_id, self.ads[ad_id].decode("utf-8")))
+            else:
+                __log__.warning("no matching ad for search_term: {}".format(search_term))
                 # TODO allow subqueries to access this data
 
+    def run_cat_query(self, search_category: str):
+        # prices and pdates have categories
+        __log__.info("running category query: search_category: {}".format(search_category))
 
-    def run_cat_query(self, cat: str):
-        __log__.info("running cat query: cat: {}".format(cat))
-        # TODO:
+        category_matches = set()
 
-    def run_location_query(self, location: str):
-        __log__.info("running location query: location: {}".format(location))
-        # TODO:
+        # look through prices
+        for price, data in self.prices.items():
+            price_str = price.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_category = get_category(data_str)
+            if db_category == search_category:
+                __log__.debug("found matching db_location: {} price: {} data: {}".format(db_category, price_str, data_str))
+                category_matches.add(get_aid(data_str))
 
-    def run_price_query(self, price: float, equator):
-        __log__.info("running price query: price: {} equator: {}".format(price, equator))
+        # look through dates
+        for date, data in self.pdates.items():
+            date_str = date.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_category = get_category(data_str)
+            if db_category == search_category:
+                __log__.debug("found matching db_location: {} date: {} data: {}".format(db_category, date_str, data_str))
+                category_matches.add(get_aid(data_str))
+
+        for aid in category_matches:
+            if self.ads.has_key(bytes(aid, "utf-8")):
+                __log__.info("found matching category: search_category: {} aid: {} ad: {}".format(search_category, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+            else:
+                __log__.warning("found matching category but no valid full ad relates to the aid: {}".format(aid))
+                # TODO allow subqueries to access this data
+
+    def run_location_query(self, search_location: str):
+        # prices and pdates have locations
+
+        __log__.info("running location query: search_location: {}".format(search_location))
+
+        location_matches = set()
+
+        # look through prices
+        for price, data in self.prices.items():
+            price_str = price.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_location = get_location(data_str)
+            if db_location == search_location:
+                __log__.debug("found matching location: {} price: {} data: {}".format(db_location, price_str, data_str))
+                location_matches.add(get_aid(data_str))
+
+        # look through dates
+        for date, data in self.pdates.items():
+            date_str = date.decode("utf-8")
+            data_str = data.decode("utf-8")
+            db_location = get_location(data_str)
+            if db_location == search_location:
+                __log__.debug("found matching location: {} date: {} data: {}".format(db_location, date_str, data_str))
+                location_matches.add(get_aid(data_str))
+
+        for aid in location_matches:
+            if self.ads.has_key(bytes(aid, "utf-8")):
+                __log__.info("found matching location: search_location: {} aid: {} ad: {}".format(search_location, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+            else:
+                __log__.warning("found matching location but no valid full ad relates to the aid: {}".format(aid))
+                # TODO allow subqueries to access this data
+
+    def run_price_query(self, search_price: float, operator):
+        __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
+
+        price_matches = set()
+
         for price_str, data in self.prices.items():
             price_str = price_str.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = float(price_str)
-            if equators[equator](price, db_price):
-                __log__.info("found valid price: {} data: {}".format(price_str, data_str))
+            if operators[operator](search_price, db_price):
+                __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
+                price_matches.add(get_aid(data_str))
+
+        for aid in price_matches:
+            if self.ads.has_key(bytes(aid, "utf-8")):
+                __log__.info(
+                    "found matching price: {} aid: {} ad: {}".format(search_price, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+            else:
+                __log__.warning("found valid price but no valid full ad relates to the aid: {}".format(aid))
                 # TODO allow subqueries to access this data
 
-    def run_date_query(self, date: datetime.datetime, equator):
-        __log__.info("starting date query: date: {} equator: {}".format(date, equator))
+    def run_date_query(self, search_date: datetime.datetime, operator):
+        __log__.info("starting date query: search_date: {} operator: {}".format(search_date, operator))
+
+        date_matches = set()
+
         for date_str, data in self.pdates.items():
             date_str = date_str.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
-            if equators[equator](date, db_date):
-                __log__.info("found valid date: {} data: {}".format(date_str, data_str))
+            if operators[operator](search_date, db_date):
+                __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
+                date_matches.add(get_aid(data_str))
+
+        for aid in date_matches:
+            if self.ads.has_key(bytes(aid, "utf-8")):
+                __log__.info(
+                    "found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+            else:
+                __log__.warning("found valid date but no valid full ad relates to the aid: {}".format(aid))
                 # TODO allow subqueries to access this data
+
+
+def get_location(data_str: str):
+    return data_str.split(",")[2]
+
+
+def get_category(data_str: str):
+    return data_str.split(",")[1]
+
+
+def get_aid(data_str: str):
+    return data_str.split(",")[0]
