@@ -108,8 +108,21 @@ def get_parser() -> argparse.ArgumentParser:
                             "file for the data contained in "
                             "``prices.txt``")
 
+    # TODO: this only allows for one query to be run we need query+ to be run
     # add the query sub-commands
     subparsers = parser.add_subparsers(help="Query Command", dest="query")
+
+    term_query_parser = subparsers.add_parser("term")
+    term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
+
+    cat_query_parser = subparsers.add_parser("cat")
+    cat_query_parser.add_argument(dest="equator", choices=["="])
+    cat_query_parser.add_argument(dest="cat", type=alpha_numeric)
+
+    location_query_parser = subparsers.add_parser("location")
+    location_query_parser.add_argument(dest="equator", choices=["="])
+    location_query_parser.add_argument(dest="location", type=alpha_numeric)
+
     date_query_parser = subparsers.add_parser("date")
     date_query_parser.add_argument(dest="equator",
                                    choices=["=", ">", "<", ">=", "<="])
@@ -119,17 +132,6 @@ def get_parser() -> argparse.ArgumentParser:
     price_query_parser.add_argument(dest="equator",
                                     choices=["=", ">", "<", ">=", "<="])
     price_query_parser.add_argument(dest="price", type=float)
-
-    location_query_parser = subparsers.add_parser("location")
-    location_query_parser.add_argument(dest="equator", choices=["="])
-    location_query_parser.add_argument(dest="location", type=alpha_numeric)
-
-    cat_query_parser = subparsers.add_parser("cat")
-    cat_query_parser.add_argument(dest="equator", choices=["="])
-    cat_query_parser.add_argument(dest="cat", type=alpha_numeric)
-
-    term_query_parser = subparsers.add_parser("term")
-    term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
 
     return parser
 
@@ -169,6 +171,11 @@ def main(argv=sys.argv[1:]) -> int:
         args.prices_index,
         args.output
     )
+
+    # TODO: handle multiple queries needs restructuring
+    if args.query == "cat":
+        query_engine.run_cat_query(args.cat)
+
     return 0
 
 

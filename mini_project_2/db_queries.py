@@ -31,7 +31,26 @@ class QueryEngine:
         else:
             raise ValueError("Invalid argument for output: {}".format(output))
 
-    def run_query(self, query):
-        """Run the given query"""
-        __log__.info("running query: {}".format(query))
-        # TODO: execute query
+    # TODO: we need the ability to run a query after a query and filter through results
+    def run_term_query(self, term: str):
+        __log__.info("running term query: term: {}".format(term))
+        if term.endswith("%"):
+            __log__.debug("wildcard detected in term: {}".format(term))
+            # TODO handle wildcard
+        # TODO:
+
+    def run_cat_query(self, cat: str):
+        __log__.info("running cat query: cat: {}".format(cat))
+        # TODO:
+
+    def run_location_query(self, location: str):
+        __log__.info("running location query: location: {}".format(location))
+        # TODO:
+
+    def run_price_query(self, price: str, equator):
+        __log__.info("running price query: price: {} equator: {}".format(price, equator))
+        # TODO:
+
+    def run_date_query(self, date: str, equator):
+        # TODO:
+        __log__.info("running date query: date: {} equator: {}".format(date, equator))
