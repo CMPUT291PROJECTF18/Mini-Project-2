@@ -64,6 +64,7 @@ setup(
         ]
     },
     install_requires=[
+        "bsddb3"
     ],
     extras_require={
         "docs": [
