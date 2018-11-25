@@ -3,24 +3,32 @@
 
 """Database querying engine for part3"""
 
+from logging import getLogger
+
 import bsddb3
 
-
-def open_ads_index(path):
-    """Open a hash ads index"""
-    return bsddb3.hashopen(path)
+__log__ = getLogger(__name__)
 
 
-def open_terms_index(path):
-    """Open a B+-tree terms index"""
-    return bsddb3.btopen(path)
+class QueryEngine:
+    def __init__(self, ads, terms, pdates, prices, output="brief"):
+        """Initialize a query engine by providing paths to
+        the ads, terms, pdates, and prices indexes"""
+        self.ads = bsddb3.hashopen(ads)
+        self.terms = bsddb3.btopen(terms)
+        self.pdates = bsddb3.btopen(pdates)
+        self.prices = bsddb3.btopen(prices)
 
+        if output == "full":
+            self.full_output = True
+        elif output == "brief":
+            self.full_output = False
+        else:
+            raise ValueError("Invalid argument for output: {}".format(output))
 
-def open_pdates_index(path):
-    """Open a B+-tree pdates index"""
-    return bsddb3.btopen(path)
-
-
-def open_prices_index(path):
-    """Open a B+-tree prices index"""
-    return bsddb3.btopen(path)
+    def run_query(self, query):
+        """Run the given query"""
+        __log__.info(
+            "running query: {} full_output: {}".format(query, self.full_output)
+        )
+        # TODO: execute query

@@ -10,6 +10,8 @@ import logging
 from logging import getLogger, basicConfig, Formatter
 from logging.handlers import TimedRotatingFileHandler
 
+from mini_project_2.db_queries import QueryEngine
+
 __log__ = getLogger(__name__)
 
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
@@ -62,6 +64,11 @@ def get_parser() -> argparse.ArgumentParser:
                             "file for the data contained in "
                             "``prices.txt``")
 
+    group = parser.add_argument_group(title="Query")
+    group.add_argument("--q", required=True,
+                       help="The Query string to process")
+    group.add_argument("--output", choices=["full", "brief"],
+                       help="Specify the output format")
     return parser
 
 
@@ -93,6 +100,8 @@ def main(argv=sys.argv[1:]) -> int:
         level=args.log_level
     )
 
+    query_engine = QueryEngine(args.ad, args.te, args.da, args.pr, args.output)
+    query_engine.run_query(args.query)
     return 0
 
 
