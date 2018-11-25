@@ -7,4 +7,5 @@ sudo apt-get install db-util
 mkdir ~/part2
 mv part2.sh ~/part2/
 mv break.pl ~/part2/
+mv gen_idx.sh ~/part2/
 chmod 733 ~/part2/*
