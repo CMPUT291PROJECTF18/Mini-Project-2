@@ -5,7 +5,13 @@ import re
 import xml.etree.ElementTree as ElementTree
 
 
-def parse(xml_string):
+def parse(path_to_file):
+    """Parses the inputted XML file. Creates terms.txt, pdates.txt, prices.txt,
+    and ads.txt. These text files are used by shell scripts to make Berkeley
+    DB index files used for querying."""
+    with open(path_to_file, "r") as xml:
+        xml_string = xml.read()
+
     term_string = parse_terms(xml_string)
     create_terms_file(term_string)
 
@@ -20,6 +26,8 @@ def parse(xml_string):
 
 
 def parse_terms(xml_string):
+    """Parses the XML file to find all keyword terms in the titles and
+    descriptions of records."""
     terms = list()
 
     elem = ElementTree.fromstring(xml_string)
@@ -52,11 +60,14 @@ def parse_terms(xml_string):
 
 
 def create_terms_file(term_string):
+    """Creates the terms.txt file."""
     with open("terms.txt", "w") as terms_file:
         terms_file.write(term_string)
 
 
 def parse_pdates(xml_string):
+    """Parses the XML file to make a text file where the keys are the record
+    posting dates."""
     pdates = list()
 
     elem = ElementTree.fromstring(xml_string)
@@ -78,11 +89,14 @@ def parse_pdates(xml_string):
 
 
 def create_pdates_file(pdate_string):
+    """Creates the pdates.txt file."""
     with open("pdates.txt", "w") as pdates_file:
         pdates_file.write(pdate_string)
 
 
 def parse_prices(xml_string):
+    """Parses the XML file to make a text file where the keys are the reocrd
+    prices."""
     prices = list()
 
     elem = ElementTree.fromstring(xml_string)
@@ -106,11 +120,14 @@ def parse_prices(xml_string):
 
 
 def create_prices_file(price_string):
+    """Creates the prices.txt file."""
     with open("prices.txt", "w") as prices_file:
         prices_file.write(price_string)
 
 
 def parse_ads(xml_string):
+    """Parses the XML file to create a text file where the keys are the ad IDs
+    and the values are the records in XML."""
     ads = list()
 
     elem = ElementTree.fromstring(xml_string)
@@ -131,5 +148,11 @@ def parse_ads(xml_string):
 
 
 def create_ads_file(ad_string):
+    """Creates the ads.txt file."""
     with open("ads.txt", "w") as ads_file:
         ads_file.write(ad_string)
+
+
+if __name__ == "__main__":
+    file = input("Path to input data file (XML): ")
+    parse(file)
