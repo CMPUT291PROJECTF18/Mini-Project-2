@@ -104,7 +104,7 @@ class QueryEngine:
         if search_term.endswith("%"):
             __log__.debug("wildcard detected in search_term: {}".format(search_term))
             base_term = search_term[:-1]
-            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9]*".format(base_term), key.decode("utf-8"))))
+            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9\-_]*".format(base_term), key.decode("utf-8"))))
         else:
             searching_terms = [search_term]
 
@@ -130,6 +130,7 @@ class QueryEngine:
             else:
                 __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(term_matches)
+        __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_cat_query(self, search_category: str):
         # prices and pdates have categories
@@ -164,6 +165,7 @@ class QueryEngine:
             else:
                 __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(category_matches)
+        __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_location_query(self, search_location: str):
         # prices and pdates have locations
@@ -200,6 +202,7 @@ class QueryEngine:
             else:
                 __log__.debug("found matching location but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(location_matches)
+        __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_price_query(self, search_price: int, operator):
         __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
@@ -223,6 +226,7 @@ class QueryEngine:
             else:
                 __log__.debug("found valid price but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(price_matches)
+        __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_date_query(self, search_date: datetime.datetime, operator):
         __log__.info("starting date query: search_date: {} operator: {}".format(search_date, operator))
@@ -246,6 +250,7 @@ class QueryEngine:
             else:
                 __log__.debug("found valid date but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(date_matches)
+        __log__.info("total hits: {}".format(len(self.ads)))
 
 
 def get_location(data_str: str):
