@@ -26,7 +26,7 @@ operators_dict = {
 }
 
 
-def create_temporary_copy(temp_dir, path):
+def create_temporary_copy(temp_dir: str, path: str) -> str:
     """Create a tempfile that is a copy of the file specified at the given
     path"""
     temp_path = os.path.join(temp_dir, Path(path).name)
@@ -34,7 +34,7 @@ def create_temporary_copy(temp_dir, path):
     return temp_path
 
 
-def parse_date(date_string: str):
+def parse_date(date_string: str) -> datetime.datetime:
     """Argparse type function for ``date`` query type
 
     :return: :class:`datetime.datetime` object parsed from the ``date_string``
