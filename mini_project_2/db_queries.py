@@ -109,9 +109,9 @@ class QueryEngine:
         if search_term.endswith("%"):
             __log__.debug("wildcard detected in search_term: {}".format(search_term))
             base_term = search_term[:-1]
-            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9\-_]*".format(base_term), key.decode("utf-8"))))
+            searching_terms = list((key.decode("utf-8").lower() for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9\-_]*".format(base_term), key.decode("utf-8"))))
         else:
-            searching_terms = [search_term]
+            searching_terms = [search_term.lower()]
 
         searching_terms = set(searching_terms)
 
