@@ -17,7 +17,7 @@ import bsddb3
 
 __log__ = getLogger(__name__)
 
-operators = {
+operators_dict = {
     ">": operator.gt,
     "<": operator.lt,
     "=": operator.eq,
@@ -66,19 +66,19 @@ class QueryEngine:
         # create a tempdir and make copies of all the indexes
         self.temp_dir = tempfile.gettempdir()
 
-        ads = create_temporary_copy(self.temp_dir , ads)
+        ads = create_temporary_copy(self.temp_dir, ads)
         self.ads = bsddb3.hashopen(ads)
         __log__.debug("loaded ads index: {}".format(self.ads))
 
-        terms = create_temporary_copy(self.temp_dir , terms)
+        terms = create_temporary_copy(self.temp_dir, terms)
         self.terms = bsddb3.btopen(terms)
         __log__.debug("loaded terms index: {}".format(self.terms))
 
-        pdates = create_temporary_copy(self.temp_dir , pdates)
+        pdates = create_temporary_copy(self.temp_dir, pdates)
         self.pdates = bsddb3.btopen(pdates)
         __log__.debug("loaded pdates index: {}".format(self.pdates))
 
-        prices = create_temporary_copy(self.temp_dir , prices)
+        prices = create_temporary_copy(self.temp_dir, prices)
         self.prices = bsddb3.btopen(prices)
         __log__.debug("loaded prices index: {}".format(self.prices))
 
@@ -219,10 +219,11 @@ class QueryEngine:
         self.delete_non_matching_aids(location_matches)
         __log__.info("total hits: {}".format(len(self.ads)))
 
-    def run_price_query(self, search_price: int, operator):
+    def run_price_query(self, search_price: int, operator_str: str):
         """Print all records that satisfy the equation
-        ``record_price operator search_price``"""
-        __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
+        ``record_price operator_str search_price``"""
+        __log__.info("running price query: search_price: {} "
+                     "operator_str: {}".format(search_price, operator_str))
 
         price_matches = set()
 
@@ -231,7 +232,7 @@ class QueryEngine:
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = int(price_str)
-            if operators[operator](db_price, search_price):
+            if operators_dict[operator_str](db_price, search_price):
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))
             else:
@@ -246,10 +247,12 @@ class QueryEngine:
         self.delete_non_matching_aids(price_matches)
         __log__.info("total hits: {}".format(len(self.ads)))
 
-    def run_date_query(self, search_date: datetime.datetime, operator: str):
+    def run_date_query(self, search_date: datetime.datetime,
+                       operator_str: str):
         """Print all records that satisfy the equation
-        ``record_date operator search_date``"""
-        __log__.info("starting date query: search_date: {} operator: {}".format(search_date, operator))
+        ``record_date operator_str search_date``"""
+        __log__.info("starting date query: search_date: {} "
+                     "operator_str: {}".format(search_date, operator_str))
 
         date_matches = set()
 
@@ -258,7 +261,7 @@ class QueryEngine:
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
-            if operators[operator](db_date, search_date):
+            if operators_dict[operator_str](db_date, search_date):
                 __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
                 date_matches.add(get_aid(data_str))
             else:
