@@ -99,15 +99,29 @@ class QueryEngine:
         else:
             searching_terms = [search_term]
 
+        searching_terms = set(searching_terms)
+
         __log__.info("running search_term query: searching_terms: {}".format(searching_terms))
-        for search_term in searching_terms:
-            search_term = bytes(search_term, "utf-8")
-            if self.terms.has_key(search_term):
-                ad_id = self.terms[search_term]
-                __log__.info("found matching term: searching_term:{} aid: {} ad: {}".format(search_term, ad_id, self.ads[ad_id].decode("utf-8")))
+
+        term_matches = set()
+
+        for term, data in list(self.terms.items()):
+            term_str = term.decode("utf-8")
+            data_str = data.decode("utf-8")
+            if term_str in searching_terms:
+                __log__.info("found matching db_term: {} data: {}".format(term_str, data_str))
+                # get the aid from the terms index
+                term_matches.add(self.terms[term].decode("utf-8"))
             else:
-                __log__.warning("no matching ad for search_term: {}".format(search_term))
+                self.terms.__delitem__(term)
+
+        for aid in term_matches:
+            if self.ads.has_key(bytes(aid, "utf-8")):
+                __log__.info("found matching term: search_term: {} aid: {} ad: {}".format(search_term, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+            else:
+                __log__.warning("found matching category but no valid full ad relates to the aid: {}".format(aid))
                 # TODO allow subqueries to access this data
+
 
     def run_cat_query(self, search_category: str):
         # prices and pdates have categories
@@ -116,22 +130,25 @@ class QueryEngine:
         category_matches = set()
 
         # look through prices
-        for price, data in self.prices.items():
+        for price, data in list(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
             if db_category == search_category:
                 __log__.debug("found matching db_location: {} price: {} data: {}".format(db_category, price_str, data_str))
                 category_matches.add(get_aid(data_str))
-
+            else:
+                self.prices.__delitem__(price)
         # look through dates
-        for date, data in self.pdates.items():
+        for date, data in list(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
             if db_category == search_category:
                 __log__.debug("found matching db_location: {} date: {} data: {}".format(db_category, date_str, data_str))
                 category_matches.add(get_aid(data_str))
+            else:
+                self.pdates.__delitem__(date)
 
         for aid in category_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -148,22 +165,26 @@ class QueryEngine:
         location_matches = set()
 
         # look through prices
-        for price, data in self.prices.items():
+        for price, data in list(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
             if db_location == search_location:
                 __log__.debug("found matching location: {} price: {} data: {}".format(db_location, price_str, data_str))
                 location_matches.add(get_aid(data_str))
+            else:
+                self.prices.__delitem__(price)
 
         # look through dates
-        for date, data in self.pdates.items():
+        for date, data in list(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
             if db_location == search_location:
                 __log__.debug("found matching location: {} date: {} data: {}".format(db_location, date_str, data_str))
                 location_matches.add(get_aid(data_str))
+            else:
+                self.pdates.__delitem__(date)
 
         for aid in location_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -177,13 +198,15 @@ class QueryEngine:
 
         price_matches = set()
 
-        for price_str, data in self.prices.items():
-            price_str = price_str.decode("utf-8")
+        for price, data in list(self.prices.items()):
+            price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = float(price_str)
             if operators[operator](search_price, db_price):
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))
+            else:
+                self.prices.__delitem__(price)
 
         for aid in price_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -198,13 +221,15 @@ class QueryEngine:
 
         date_matches = set()
 
-        for date_str, data in self.pdates.items():
-            date_str = date_str.decode("utf-8")
+        for date, data in list(self.pdates.items()):
+            date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
             if operators[operator](search_date, db_date):
                 __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
                 date_matches.add(get_aid(data_str))
+            else:
+                self.pdates.__delitem__(date)
 
         for aid in date_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
