@@ -17,34 +17,44 @@ def test_get_parser():
 
 @pytest.mark.parametrize("cmd",
                          [
-                             "price>-30 term=camera".split(),
-                             "price>0 term=camera".split(),
-                             "price<30 term=camera".split(),
-                             "price=30".split(),
-                             "price>=30".split(),
-                             "price<=30".split(),
-                             "price<30".split(),
-                             "price>30".split(),
-                             "term=camera".split(),
-                             "term=camera%".split(),
-                             "location=Red-deer".split(),
-                             "location=Calgary".split(),
-                             "price>30 term=camera location=Calgary".split(),
-                             "price>30 term=camera location=Red-Deer".split(),
-                             "price>30 term=camera location=Red-Deer cat=nonsuchcat".split(),
-                             "cat=nonsuchcat".split(),
-                             "date=2018/01/01".split(),
-                             "date>=2018/01/01".split(),
-                             "date<=2018/01/01".split(),
-                             "date>2018/01/01".split(),
-                             "date<2018/01/01".split(),
-                             "price>30 term=camera location=Red-Deer cat=nonsuchcat date>2018/01/01".split(),
+                             "price>-30 term=camera",
+                             "price>0 term=camera",
+                             "price<30 term=camera",
+                             "price=30",
+                             "price>=30",
+                             "price<=30",
+                             "price<30",
+                             "price>30",
+                             "term=camera",
+                             "term=camera%",
+                             "location=Red-deer",
+                             "location=Calgary",
+                             "price>30 term=camera location=Calgary",
+                             "price>30 term=camera location=Red-Deer",
+                             "price>30 term=camera location=Red-Deer cat=nonsuchcat",
+                             "cat=nonsuchcat",
+                             "date=2018/01/01",
+                             "date>=2018/01/01",
+                             "date<=2018/01/01",
+                             "date>2018/01/01",
+                             "date<2018/01/01",
+                             "price>30 term=camera location=Red-Deer cat=nonsuchcat date>2018/01/01",
+                             # given queries to test
+                             "term=camera",
+                             "term=camera%",
+                             "date<=2018/11/05",
+                             "date>2018/11/05",
+                             "price<20",
+                             "price>=20",
+                             "location=edmonton date=2018/11/07",
+                             "cat=artcollectibles term=camera",
+                             "term=camera date>=2018/11/05 date<=2018/11/07 price>20 price<40"
                          ]
                          )
 def test_main(cmd):
     """Bad tests to ensure nothing is extremely broken"""
-    base_cmd = """-ad mini_project_2/scripts/data/indexes/ads.idx -te mini_project_2/scripts/data/indexes/terms.idx -da mini_project_2/scripts/data/indexes/pdates.idx -pr mini_project_2/scripts/data/indexes/prices.idx -o full -v --log-level INFO""".split()
-    main(base_cmd + cmd)
+    base_cmd = """-ad mini_project_2/scripts/data/indexes/ads.idx -te mini_project_2/scripts/data/indexes/terms.idx -da mini_project_2/scripts/data/indexes/pdates.idx -pr mini_project_2/scripts/data/indexes/prices.idx -o full -v --log-level INFO"""
+    main(base_cmd.split() + cmd.split())
     # TODO: more better testing.
 
 
