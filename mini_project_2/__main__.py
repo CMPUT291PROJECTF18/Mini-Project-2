@@ -23,8 +23,7 @@ def term_alpha_numeric(term_alpha_numeric_string: str):
     if term_alpha_numeric_string:
         if term_alpha_numeric_string.endswith("%"):
             return alpha_numeric(term_alpha_numeric_string[:-1]) + "%"
-        else:
-            return alpha_numeric(term_alpha_numeric_string)
+        return alpha_numeric(term_alpha_numeric_string)
     else:
         raise argparse.ArgumentTypeError("invalid term alphaNumeric string")
 
@@ -51,6 +50,7 @@ def date(date_string: str):
 
 
 def log_level(log_level_string: str):
+    """Argparse type function for determining the specified logging level"""
     if log_level_string not in LOG_LEVEL_STRINGS:
         raise argparse.ArgumentTypeError(
             "invalid choice: {} (choose from {})".format(
@@ -62,6 +62,8 @@ def log_level(log_level_string: str):
 
 
 def get_query_parser() -> argparse.ArgumentParser:
+    """Create and return the argument parser for the supported
+    query commands"""
     parser = argparse.ArgumentParser(
         description="mini-project-2 query command"
     )
