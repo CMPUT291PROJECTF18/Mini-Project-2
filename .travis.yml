@@ -1,5 +1,5 @@
 language: python
-
+sudo: required
 
 stages:
   - lint
@@ -9,6 +9,10 @@ stages:
 
 
 before_install:
+  - sudo add-apt-repository ppa:bitcoin/bitcoin -y
+  - sudo apt-get update
+  - sudo apt-get install libdb4.8-dev libdb4.8++-dev -y
+  - sudo apt-get install db-util -y
   - pip install codecov
 
 
@@ -26,7 +30,6 @@ after_success:
 
 jobs:
   include:
-    - python: pypy3
     - python: 3.4
     - python: 3.5
     - python: 3.6
