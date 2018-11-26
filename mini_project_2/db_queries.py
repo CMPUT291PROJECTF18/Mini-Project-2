@@ -55,12 +55,14 @@ def parse_date(date_string: str):
 class QueryEngine:
     """Query processing engine class for part3
 
-    This loads and interacts with 4 Berkeley Database indexes.
+    This loads, copies, and then interacts with 4 Berkeley Database indexes
+    (``ads.idx``, ``terms.idx``, ``pdates.idx``, and ``prices.idx``).
     """
 
-    def __init__(self, ads, terms, pdates, prices, output="brief"):
-        """Initialize a query engine by providing paths to the ads, terms,
-         pdates, and prices indexes"""
+    def __init__(self, ads: str, terms: str, pdates: str, prices: str,
+                 output: str = "brief"):
+        """Initialize a query engine by providing paths to the ``ads``,
+        ``terms``, ``pdates``, and ``prices`` indexes"""
         # create a tempdir and make copies of all the indexes
         self.temp_dir = tempfile.gettempdir()
 
@@ -98,9 +100,10 @@ class QueryEngine:
         # cleaner code.
 
     def run_term_query(self, search_term: str):
-        """Print and return all records that have the search_term as a work within
-        the title or description fields"""
+        """Print and return all records that have the search_term as a
+        word within the title or description fields"""
         __log__.info("starting term query: search_term: {}".format(search_term))
+
         if search_term.endswith("%"):
             __log__.debug("wildcard detected in search_term: {}".format(search_term))
             base_term = search_term[:-1]
@@ -114,6 +117,7 @@ class QueryEngine:
 
         term_matches = set()
 
+        # look through terms
         for term, data in list(self.terms.items()):
             term_str = term.decode("utf-8")
             data_str = data.decode("utf-8")
@@ -133,6 +137,12 @@ class QueryEngine:
         __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_cat_query(self, search_category: str):
+        """Print all records that have the given ``search_category`` within
+        their category fields
+
+        Both the ``prices`` and ``pdates`` indexes have categories thus, they
+        will be searched.
+        """
         # prices and pdates have categories
         __log__.info("running category query: search_category: {}".format(search_category))
 
@@ -148,6 +158,7 @@ class QueryEngine:
                 category_matches.add(get_aid(data_str))
             else:
                 self.prices.__delitem__(price)
+
         # look through dates
         for date, data in list(self.pdates.items()):
             date_str = date.decode("utf-8")
@@ -168,8 +179,12 @@ class QueryEngine:
         __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_location_query(self, search_location: str):
-        # prices and pdates have locations
+        """Print all records that have the given ``search_location`` within
+        their location fields
 
+        Both the ``prices`` and ``pdates`` indexes have locations thus, they
+        will be searched.
+        """
         __log__.info("running location query: search_location: {}".format(search_location))
 
         location_matches = set()
@@ -205,10 +220,13 @@ class QueryEngine:
         __log__.info("total hits: {}".format(len(self.ads)))
 
     def run_price_query(self, search_price: int, operator):
+        """Print all records that satisfy the equation
+        ``record_price operator search_price``"""
         __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
 
         price_matches = set()
 
+        # look through prices
         for price, data in list(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
@@ -228,11 +246,14 @@ class QueryEngine:
         self.delete_non_matching_aids(price_matches)
         __log__.info("total hits: {}".format(len(self.ads)))
 
-    def run_date_query(self, search_date: datetime.datetime, operator):
+    def run_date_query(self, search_date: datetime.datetime, operator: str):
+        """Print all records that satisfy the equation
+        ``record_date operator search_date``"""
         __log__.info("starting date query: search_date: {} operator: {}".format(search_date, operator))
 
         date_matches = set()
 
+        # look through dates
         for date, data in list(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
@@ -254,12 +275,18 @@ class QueryEngine:
 
 
 def get_location(data_str: str):
+    """Get the category field from either a ``prices`` or ``pdates`` index's
+    key's data"""
     return data_str.split(",")[2]
 
 
 def get_category(data_str: str):
+    """Get the category field from either a ``prices`` or ``pdates`` index's
+    key's data"""
     return data_str.split(",")[1]
 
 
 def get_aid(data_str: str):
+    """Get the ad ID field from either a ``prices`` or ``pdates`` index's
+    key's data"""
     return data_str.split(",")[0]
