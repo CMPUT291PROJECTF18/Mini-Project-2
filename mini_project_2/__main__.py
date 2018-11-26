@@ -4,6 +4,7 @@
 """argparse and entry point script for mini-project-2"""
 
 import argparse
+import datetime
 import os
 import re
 import sys
@@ -18,7 +19,7 @@ __log__ = getLogger(__name__)
 LOG_LEVEL_STRINGS = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
 
-def term_alpha_numeric(term_alpha_numeric_string: str):
+def term_alpha_numeric(term_alpha_numeric_string: str) -> str:
     """Argparse type function for term ``alphaNumeric`` query type"""
     if term_alpha_numeric_string:
         if term_alpha_numeric_string.endswith("%"):
@@ -28,7 +29,7 @@ def term_alpha_numeric(term_alpha_numeric_string: str):
         raise argparse.ArgumentTypeError("invalid term alphaNumeric string")
 
 
-def alpha_numeric(alpha_numeric_string: str):
+def alpha_numeric(alpha_numeric_string: str) -> str:
     """Argparse type function for ``alphaNumeric`` query type"""
     if alpha_numeric_string and re.match("^[a-zA-Z0-9\-_]+$", alpha_numeric_string):
         return alpha_numeric_string
@@ -36,7 +37,7 @@ def alpha_numeric(alpha_numeric_string: str):
         raise argparse.ArgumentTypeError("invalid alphaNumeric string")
 
 
-def date(date_string: str):
+def date(date_string: str) -> datetime.datetime:
     """Argparse type function for ``date`` query type
 
     :return: :class:`datetime.datetime` object parsed from the ``date_string``
@@ -91,6 +92,7 @@ def get_query_parser() -> argparse.ArgumentParser:
                                     choices=["=", ">", "<", ">=", "<="])
     price_query_parser.add_argument(dest="price", type=int)
     return parser
+
 
 def get_parser() -> argparse.ArgumentParser:
     """Create and return the argparser for mini-project-2"""
