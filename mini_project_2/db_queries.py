@@ -123,7 +123,7 @@ class QueryEngine:
         for term, data in list(self.terms.items()):
             term_str = term.decode("utf-8")
             data_str = data.decode("utf-8")
-            if term_str in searching_terms:
+            if term_str.lower() in searching_terms:
                 __log__.info("found matching db_term: {} data: {}".format(term_str, data_str))
                 # get the aid from the terms index
                 term_matches.add(self.terms[term].decode("utf-8"))
@@ -158,7 +158,7 @@ class QueryEngine:
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
-            if db_category == search_category:
+            if db_category.lower() == search_category.lower():
                 __log__.debug("found matching db_location: {} price: {} data: {}".format(db_category, price_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
@@ -169,7 +169,7 @@ class QueryEngine:
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
-            if db_category == search_category:
+            if db_category.lower() == search_category.lower():
                 __log__.debug("found matching db_location: {} date: {} data: {}".format(db_category, date_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
@@ -202,7 +202,7 @@ class QueryEngine:
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
-            if db_location == search_location:
+            if db_location.lower() == search_location.lower():
                 __log__.debug("found matching location: {} price: {} data: {}".format(db_location, price_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
@@ -213,7 +213,7 @@ class QueryEngine:
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
-            if db_location == search_location:
+            if db_location.lower() == search_location.lower():
                 __log__.debug("found matching location: {} date: {} data: {}".format(db_location, date_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
