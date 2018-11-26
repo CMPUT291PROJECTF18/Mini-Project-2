@@ -104,7 +104,7 @@ class QueryEngine:
         if search_term.endswith("%"):
             __log__.debug("wildcard detected in search_term: {}".format(search_term))
             base_term = search_term[:-1]
-            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA=Z0-9]*".format(base_term), key.decode("utf-8"))))
+            searching_terms = list((key.decode("utf-8") for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9]*".format(base_term), key.decode("utf-8"))))
         else:
             searching_terms = [search_term]
 
@@ -210,7 +210,7 @@ class QueryEngine:
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = int(price_str)
-            if operators[operator](search_price, db_price):
+            if operators[operator](db_price, search_price):
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))
             else:
@@ -233,7 +233,7 @@ class QueryEngine:
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
-            if operators[operator](search_date, db_date):
+            if operators[operator](db_date, search_date):
                 __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
                 date_matches.add(get_aid(data_str))
             else:
