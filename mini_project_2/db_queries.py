@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """Database querying engine for part3"""
+
+import tempfile
+import shutil
+import os
+import operator
+from pathlib import Path
+
 import datetime
 import re
 from logging import getLogger
@@ -10,16 +17,21 @@ import bsddb3
 
 __log__ = getLogger(__name__)
 
-import operator
-
 operators = {
     ">": operator.gt,
     "<": operator.lt,
     "=": operator.eq,
     ">=": operator.ge,
     "<=": operator.le,
-
 }
+
+
+def create_temporary_copy(temp_dir, path):
+    """Create a tempfile that is a copy of the file specified at the given
+    path"""
+    temp_path = os.path.join(temp_dir, Path(path).name)
+    shutil.copy2(path, temp_path)
+    return temp_path
 
 
 def parse_date(date_string: str):
@@ -49,15 +61,22 @@ class QueryEngine:
     def __init__(self, ads, terms, pdates, prices, output="brief"):
         """Initialize a query engine by providing paths to the ads, terms,
          pdates, and prices indexes"""
+        # create a tempdir and make copies of all the indexes
+        self.temp_dir = tempfile.gettempdir()
+
+        ads = create_temporary_copy(self.temp_dir , ads)
         self.ads = bsddb3.hashopen(ads)
         __log__.debug("loaded ads index: {}".format(self.ads))
 
+        terms = create_temporary_copy(self.temp_dir , terms)
         self.terms = bsddb3.btopen(terms)
         __log__.debug("loaded terms index: {}".format(self.terms))
 
+        pdates = create_temporary_copy(self.temp_dir , pdates)
         self.pdates = bsddb3.btopen(pdates)
         __log__.debug("loaded pdates index: {}".format(self.pdates))
 
+        prices = create_temporary_copy(self.temp_dir , prices)
         self.prices = bsddb3.btopen(prices)
         __log__.debug("loaded prices index: {}".format(self.prices))
 
