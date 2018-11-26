@@ -29,25 +29,24 @@ def parse_terms(xml_string):
         aid = ad.find("aid").text
 
         title = ad.find("ti").text
-        title = re.sub("['\"]", "", title)
+        if title is not None:
+            title = re.sub("apos;|quot;|\"|'", "", title)
 
-        for token in re.split(r"(?!-)\W", title):
-            if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
-                terms.append(token.lower() + ":" + aid)
+            for token in re.split(r"(?!-)\W", title):
+                if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
+                    terms.append(token.lower() + ":" + aid)
 
         description = ad.find("desc").text
-        description = re.sub("['\"]", "", description)
+        if description is not None:
+            description = re.sub("apos;|quot;|\"|'", "", description)
 
-        for token in re.split(r"(?!-)\W", description):
-            if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
-                terms.append(token.lower() + ":" + aid)
+            for token in re.split(r"(?!-)\W", description):
+                if len(token) > 2 and re.match(r"^[0-9a-zA-Z_\-]*$", token, 0):
+                    terms.append(token.lower() + ":" + aid)
 
     term_string = ""
-    for i, term in enumerate(terms):
-        if i == len(terms) - 1:
-            term_string += term
-        else:
-            term_string += (term + "\n")
+    for term in terms:
+        term_string += (term + "\n")
 
     return term_string
 
@@ -65,17 +64,15 @@ def parse_pdates(xml_string):
 
     for ad in root.findall("ad"):
         date = ad.find("date").text
-        aid = ad.find("aid").text
-        category = ad.find("cat").text
-        location = ad.find("loc").text
-        pdates.append(date + ":" + aid + "," + category + "," + location)
+        if date is not None:
+            aid = ad.find("aid").text
+            category = ad.find("cat").text
+            location = ad.find("loc").text
+            pdates.append(date + ":" + aid + "," + category + "," + location)
 
     pdate_string = ""
-    for i, pdate in enumerate(pdates):
-        if i == len(pdates) - 1:
-            pdate_string += pdate
-        else:
-            pdate_string += (pdate + "\n")
+    for pdate in pdates:
+        pdate_string += (pdate + "\n")
 
     return pdate_string
 
@@ -93,7 +90,7 @@ def parse_prices(xml_string):
 
     for ad in root.findall("ad"):
         price = ad.find("price").text
-        if len(price):
+        if price is not None:
             aid = ad.find("aid").text
             category = ad.find("cat").text
             location = ad.find("loc").text
@@ -102,11 +99,8 @@ def parse_prices(xml_string):
                           location)
 
     price_string = ""
-    for i, price in enumerate(prices):
-        if i == len(prices) - 1:
-            price_string += price
-        else:
-            price_string += (price + "\n")
+    for price in prices:
+        price_string += (price + "\n")
 
     return price_string
 
@@ -130,11 +124,8 @@ def parse_ads(xml_string):
         ads[i] += ad_xml
 
     ad_string = ""
-    for i, ad in enumerate(ads):
-        if i == len(ads) - 1:
-            ad_string += ad
-        else:
-            ad_string += (ad + "\n")
+    for ad in ads:
+        ad_string += (ad + "\n")
 
     return ad_string
 
