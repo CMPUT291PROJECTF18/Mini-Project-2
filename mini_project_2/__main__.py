@@ -69,6 +69,7 @@ def get_query_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(help="Query Command", dest="query")
 
     term_query_parser = subparsers.add_parser("term")
+    term_query_parser.add_argument(dest="equator", choices=["="])
     term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
 
     cat_query_parser = subparsers.add_parser("cat")
@@ -179,9 +180,9 @@ def main(argv=sys.argv[1:]) -> int:
         query_command = re.sub(r'(.*)(>|<|=|>=|<=)(.*)', r'\1 \2 \3', query_command)
         query_command = query_command.split()
         __log__.info("parsing query command: {}".format(query_command))
+
         query_parser = get_query_parser()
         args = query_parser.parse_args(query_command)
-        # TODO: handle multiple queries needs restructuring
         if args.query == "cat":
             query_engine.run_cat_query(args.cat)
         if args.query == "term":
