@@ -176,7 +176,7 @@ def main(argv=sys.argv[1:]) -> int:
     for query_command in args.query_commands:
         __log__.debug("parsing raw query command: {}".format(query_command))
         # doing so regex and python string cleanup
-        query_command = re.sub(r'(.*)(>|<|=|>=|<=)(.*)', r'\1 \2 \3', query_command)
+        query_command = re.sub(r'(.*[^><=]+)(>=|>|<=|<|=)([^><=]+.*)', r'\1 \2 \3', query_command)
         query_command = query_command.split()
         __log__.info("parsing query command: {}".format(query_command))
 

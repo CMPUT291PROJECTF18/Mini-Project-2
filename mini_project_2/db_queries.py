@@ -52,6 +52,8 @@ def parse_date(date_string: str):
         )
 
 
+
+
 class QueryEngine:
     """Query processing engine class for part3
 
@@ -87,7 +89,16 @@ class QueryEngine:
         else:
             raise ValueError("Invalid argument for output: {}".format(output))
 
-    # TODO: we need the ability to run a query after a query and filter through results
+    def delete_non_matching_aids(self, matching_aids):
+        """remove ad(s) from the ads index that do not have a aid contained
+        within ``matching_aids``"""
+        aids_to_delete = [aid for aid in self.ads.keys() if aid not in [bytes(key, "utf-8") for key in matching_aids]]
+        for aid in aids_to_delete:
+            self.ads.__delitem__(aid)
+        # TODO: we should also cleanup other indexes here aswell
+        # this isn't needed functionally, but, if done would likely lead to
+        # cleaner code.
+
     def run_term_query(self, search_term: str):
         """Print and return all records that have the search_term as a work within
         the title or description fields"""
@@ -119,9 +130,8 @@ class QueryEngine:
             if self.ads.has_key(bytes(aid, "utf-8")):
                 __log__.info("found matching term: search_term: {} aid: {} ad: {}".format(search_term, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
             else:
-                __log__.warning("found matching category but no valid full ad relates to the aid: {}".format(aid))
-                # TODO allow subqueries to access this data
-
+                __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
+        self.delete_non_matching_aids(term_matches)
 
     def run_cat_query(self, search_category: str):
         # prices and pdates have categories
@@ -154,8 +164,8 @@ class QueryEngine:
             if self.ads.has_key(bytes(aid, "utf-8")):
                 __log__.info("found matching category: search_category: {} aid: {} ad: {}".format(search_category, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
             else:
-                __log__.warning("found matching category but no valid full ad relates to the aid: {}".format(aid))
-                # TODO allow subqueries to access this data
+                __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
+        self.delete_non_matching_aids(category_matches)
 
     def run_location_query(self, search_location: str):
         # prices and pdates have locations
@@ -190,8 +200,8 @@ class QueryEngine:
             if self.ads.has_key(bytes(aid, "utf-8")):
                 __log__.info("found matching location: search_location: {} aid: {} ad: {}".format(search_location, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
             else:
-                __log__.warning("found matching location but no valid full ad relates to the aid: {}".format(aid))
-                # TODO allow subqueries to access this data
+                __log__.debug("found matching location but no valid full ad relates to the aid: {}".format(aid))
+        self.delete_non_matching_aids(location_matches)
 
     def run_price_query(self, search_price: float, operator):
         __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
@@ -213,8 +223,8 @@ class QueryEngine:
                 __log__.info(
                     "found matching price: {} aid: {} ad: {}".format(search_price, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
             else:
-                __log__.warning("found valid price but no valid full ad relates to the aid: {}".format(aid))
-                # TODO allow subqueries to access this data
+                __log__.debug("found valid price but no valid full ad relates to the aid: {}".format(aid))
+        self.delete_non_matching_aids(price_matches)
 
     def run_date_query(self, search_date: datetime.datetime, operator):
         __log__.info("starting date query: search_date: {} operator: {}".format(search_date, operator))
@@ -236,8 +246,8 @@ class QueryEngine:
                 __log__.info(
                     "found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
             else:
-                __log__.warning("found valid date but no valid full ad relates to the aid: {}".format(aid))
-                # TODO allow subqueries to access this data
+                __log__.debug("found valid date but no valid full ad relates to the aid: {}".format(aid))
+        self.delete_non_matching_aids(date_matches)
 
 
 def get_location(data_str: str):
