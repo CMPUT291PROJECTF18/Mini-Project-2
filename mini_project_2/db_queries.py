@@ -277,19 +277,19 @@ class QueryEngine:
         __log__.info("total hits: {}".format(len(self.ads)))
 
 
-def get_location(data_str: str):
+def get_location(data_str: str) -> str:
     """Get the category field from either a ``prices`` or ``pdates`` index's
     key's data"""
     return data_str.split(",")[2]
 
 
-def get_category(data_str: str):
+def get_category(data_str: str) -> str:
     """Get the category field from either a ``prices`` or ``pdates`` index's
     key's data"""
     return data_str.split(",")[1]
 
 
-def get_aid(data_str: str):
+def get_aid(data_str: str) -> str:
     """Get the ad ID field from either a ``prices`` or ``pdates`` index's
     key's data"""
     return data_str.split(",")[0]
