@@ -30,7 +30,7 @@ def term_alpha_numeric(term_alpha_numeric_string: str):
 
 def alpha_numeric(alpha_numeric_string: str):
     """Argparse type function for ``alphaNumeric`` query type"""
-    if alpha_numeric_string and re.match("^[a-zA-Z0-9\-\_]+$", alpha_numeric_string):
+    if alpha_numeric_string and re.match("^[a-zA-Z0-9\-_]+$", alpha_numeric_string):
         return alpha_numeric_string
     else:
         raise argparse.ArgumentTypeError("invalid alphaNumeric string")
