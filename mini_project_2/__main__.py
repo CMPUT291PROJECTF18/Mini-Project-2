@@ -136,7 +136,6 @@ def get_parser() -> argparse.ArgumentParser:
                             "file for the data contained in "
                             "``prices.txt``")
 
-    # TODO: this only allows for one query to be run we need query+ to be run
     # add the query sub-commands
     parser.add_argument("query_commands", nargs="+")
     return parser
