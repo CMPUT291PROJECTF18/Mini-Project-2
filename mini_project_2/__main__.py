@@ -6,6 +6,7 @@
 import argparse
 import datetime
 import os
+import re
 import sys
 import logging
 from logging import getLogger, basicConfig, Formatter
@@ -61,6 +62,34 @@ def log_level(log_level_string: str):
     return getattr(logging, log_level_string, logging.INFO)
 
 
+def get_query_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="mini-project-2 query command"
+    )
+    subparsers = parser.add_subparsers(help="Query Command", dest="query")
+
+    term_query_parser = subparsers.add_parser("term")
+    term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
+
+    cat_query_parser = subparsers.add_parser("cat")
+    cat_query_parser.add_argument(dest="equator", choices=["="])
+    cat_query_parser.add_argument(dest="cat", type=alpha_numeric)
+
+    location_query_parser = subparsers.add_parser("location")
+    location_query_parser.add_argument(dest="equator", choices=["="])
+    location_query_parser.add_argument(dest="location", type=alpha_numeric)
+
+    date_query_parser = subparsers.add_parser("date")
+    date_query_parser.add_argument(dest="equator",
+                                   choices=["=", ">", "<", ">=", "<="])
+    date_query_parser.add_argument(dest="date", type=date)
+
+    price_query_parser = subparsers.add_parser("price")
+    price_query_parser.add_argument(dest="equator",
+                                    choices=["=", ">", "<", ">=", "<="])
+    price_query_parser.add_argument(dest="price", type=float)
+    return parser
+
 def get_parser() -> argparse.ArgumentParser:
     """Create and return the argparser for mini-project-2"""
     parser = argparse.ArgumentParser(
@@ -105,29 +134,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     # TODO: this only allows for one query to be run we need query+ to be run
     # add the query sub-commands
-    subparsers = parser.add_subparsers(help="Query Command", dest="query")
-
-    term_query_parser = subparsers.add_parser("term")
-    term_query_parser.add_argument(dest="term", type=term_alpha_numeric)
-
-    cat_query_parser = subparsers.add_parser("cat")
-    cat_query_parser.add_argument(dest="equator", choices=["="])
-    cat_query_parser.add_argument(dest="cat", type=alpha_numeric)
-
-    location_query_parser = subparsers.add_parser("location")
-    location_query_parser.add_argument(dest="equator", choices=["="])
-    location_query_parser.add_argument(dest="location", type=alpha_numeric)
-
-    date_query_parser = subparsers.add_parser("date")
-    date_query_parser.add_argument(dest="equator",
-                                   choices=["=", ">", "<", ">=", "<="])
-    date_query_parser.add_argument(dest="date", type=date)
-
-    price_query_parser = subparsers.add_parser("price")
-    price_query_parser.add_argument(dest="equator",
-                                    choices=["=", ">", "<", ">=", "<="])
-    price_query_parser.add_argument(dest="price", type=float)
-
+    parser.add_argument("query_commands", nargs="+")
     return parser
 
 
@@ -166,18 +173,25 @@ def main(argv=sys.argv[1:]) -> int:
         args.prices_index,
         args.output
     )
-
-    # TODO: handle multiple queries needs restructuring
-    if args.query == "cat":
-        query_engine.run_cat_query(args.cat)
-    if args.query == "term":
-        query_engine.run_term_query(args.term)
-    if args.query == "date":
-        query_engine.run_date_query(args.date, args.equator)
-    if args.query == "location":
-        query_engine.run_location_query(args.location)
-    if args.query == "price":
-        query_engine.run_price_query(args.price, args.equator)
+    for query_command in args.query_commands:
+        __log__.debug("parsing raw query command: {}".format(query_command))
+        # doing so regex and python string cleanup
+        query_command = re.sub(r'(.*)(>|<|=|>=|<=)(.*)', r'\1 \2 \3', query_command)
+        query_command = query_command.split()
+        __log__.info("parsing query command: {}".format(query_command))
+        query_parser = get_query_parser()
+        args = query_parser.parse_args(query_command)
+        # TODO: handle multiple queries needs restructuring
+        if args.query == "cat":
+            query_engine.run_cat_query(args.cat)
+        if args.query == "term":
+            query_engine.run_term_query(args.term)
+        if args.query == "date":
+            query_engine.run_date_query(args.date, args.equator)
+        if args.query == "location":
+            query_engine.run_location_query(args.location)
+        if args.query == "price":
+            query_engine.run_price_query(args.price, args.equator)
 
     return 0
 
