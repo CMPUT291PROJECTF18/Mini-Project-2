@@ -13,6 +13,8 @@ import datetime
 import re
 from logging import getLogger
 
+import lxml
+from bs4 import BeautifulSoup
 import bsddb3
 
 __log__ = getLogger(__name__)
@@ -130,9 +132,12 @@ class QueryEngine:
 
         for aid in term_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
-                __log__.info("found matching term: search_term: {} aid: {} ad: {}".format(search_term, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                if self.full_output:
+                    __log__.info("found matching term: search_term: {} aid: {} ad: {}".format(search_term, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                else:
+                    __log__.info("found matching term: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
-                __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
+                __log__.debug("found matching term but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(term_matches)
         __log__.info("total hits: {}".format(len(self.ads)))
 
@@ -172,7 +177,10 @@ class QueryEngine:
 
         for aid in category_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
-                __log__.info("found matching category: search_category: {} aid: {} ad: {}".format(search_category, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                if self.full_output:
+                    __log__.info("found matching category: search_category: {} aid: {} ad: {}".format(search_category, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                else:
+                    __log__.info("found matching category: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
                 __log__.debug("found matching category but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(category_matches)
@@ -213,7 +221,10 @@ class QueryEngine:
 
         for aid in location_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
-                __log__.info("found matching location: search_location: {} aid: {} ad: {}".format(search_location, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                if self.full_output:
+                    __log__.info("found matching location: search_location: {} aid: {} ad: {}".format(search_location, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                else:
+                    __log__.info("found matching location: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
                 __log__.debug("found matching location but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(location_matches)
@@ -240,8 +251,10 @@ class QueryEngine:
 
         for aid in price_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
-                __log__.info(
-                    "found matching price: {} aid: {} ad: {}".format(search_price, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                if self.full_output:
+                    __log__.info("found matching price: {} aid: {} ad: {}".format(search_price, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                else:
+                    __log__.info("found matching price: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
                 __log__.debug("found valid price but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(price_matches)
@@ -269,8 +282,11 @@ class QueryEngine:
 
         for aid in date_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
-                __log__.info(
-                    "found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                if self.full_output:
+                    __log__.info(
+                        "found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                else:
+                    __log__.info("found matching date: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
                 __log__.debug("found valid date but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(date_matches)
@@ -293,3 +309,9 @@ def get_aid(data_str: str) -> str:
     """Get the ad ID field from either a ``prices`` or ``pdates`` index's
     key's data"""
     return data_str.split(",")[0]
+
+
+def get_title(ad: str) -> str:
+    """From a raw ad records xml extract and return the ads title"""
+    soup = BeautifulSoup(ad, "lxml")
+    return soup.find("ti").getText()
