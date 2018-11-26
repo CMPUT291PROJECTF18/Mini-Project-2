@@ -52,8 +52,6 @@ def parse_date(date_string: str):
         )
 
 
-
-
 class QueryEngine:
     """Query processing engine class for part3
 
