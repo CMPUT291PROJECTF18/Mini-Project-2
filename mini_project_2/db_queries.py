@@ -283,8 +283,7 @@ class QueryEngine:
         for aid in date_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
                 if self.full_output:
-                    __log__.info(
-                        "found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
+                    __log__.info("found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
                     __log__.info("found matching date: aid: {} title: {}".format(aid, get_title(self.ads[bytes(aid, "utf-8")].decode("utf-8"))))
             else:
