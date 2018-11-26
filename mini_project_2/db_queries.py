@@ -201,7 +201,7 @@ class QueryEngine:
                 __log__.debug("found matching location but no valid full ad relates to the aid: {}".format(aid))
         self.delete_non_matching_aids(location_matches)
 
-    def run_price_query(self, search_price: float, operator):
+    def run_price_query(self, search_price: int, operator):
         __log__.info("running price query: search_price: {} operator: {}".format(search_price, operator))
 
         price_matches = set()
@@ -209,7 +209,7 @@ class QueryEngine:
         for price, data in list(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
-            db_price = float(price_str)
+            db_price = int(price_str)
             if operators[operator](search_price, db_price):
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))

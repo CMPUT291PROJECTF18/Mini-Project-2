@@ -87,7 +87,7 @@ def get_query_parser() -> argparse.ArgumentParser:
     price_query_parser = subparsers.add_parser("price")
     price_query_parser.add_argument(dest="equator",
                                     choices=["=", ">", "<", ">=", "<="])
-    price_query_parser.add_argument(dest="price", type=float)
+    price_query_parser.add_argument(dest="price", type=int)
     return parser
 
 def get_parser() -> argparse.ArgumentParser:
