@@ -18,7 +18,10 @@ mini-project-2
 Requirements
 ============
 
-* Python 3.6+
+* Python 3.4+
+* libdb4.8-dev
+* libdb4.8++-dev
+* db-util
 
 
 Overview
@@ -32,7 +35,20 @@ TODO: finish
 Installation
 ============
 
-mini-project-2 can be installed from source by running:
+To install the Berkeley DB dependencies for mini-project-2 on Ubuntu run the
+following commands:
+
+.. code-block:: bash
+
+    sudo add-apt-repository ppa:bitcoin/bitcoin
+    sudo apt-get update
+    sudo apt-get install libdb4.8-dev libdb4.8++-dev
+    sudo apt-get install db-util -y
+
+This should install the required libraries to install `bsddb3` from
+`pip`, thus, allowing mini-project-2 to be properly installed.
+
+mini-project-2 can then be installed from source by running:
 
 .. code-block:: bash
 

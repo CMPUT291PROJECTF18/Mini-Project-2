@@ -6,7 +6,7 @@
 Scripts:
  + :mod:`.__main__` - argparse entry point
 Modules:
- + :mod:`.` -
+ + :mod:`.db_queries` - Database querying engine for part3
 """
 
 __version__ = (0, 0, 0)

@@ -64,6 +64,9 @@ setup(
         ]
     },
     install_requires=[
+        "bsddb3>=6.2.6,<7.0.0",
+        "beautifulsoup4>=4.6.3,<5.0.0",
+        "lxml>=4.2.5,<5.0.0",
     ],
     extras_require={
         "docs": [
