@@ -120,7 +120,7 @@ class QueryEngine:
         term_matches = set()
 
         # look through terms
-        for term, data in list(self.terms.items()):
+        for term, data in set(self.terms.items()):
             term_str = term.decode("utf-8")
             data_str = data.decode("utf-8")
             if term_str.lower() in searching_terms:
@@ -154,7 +154,7 @@ class QueryEngine:
         category_matches = set()
 
         # look through prices
-        for price, data in list(self.prices.items()):
+        for price, data in set(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
@@ -165,7 +165,7 @@ class QueryEngine:
                 self.prices.__delitem__(price)
 
         # look through dates
-        for date, data in list(self.pdates.items()):
+        for date, data in set(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
@@ -198,7 +198,7 @@ class QueryEngine:
         location_matches = set()
 
         # look through prices
-        for price, data in list(self.prices.items()):
+        for price, data in set(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
@@ -209,7 +209,7 @@ class QueryEngine:
                 self.prices.__delitem__(price)
 
         # look through dates
-        for date, data in list(self.pdates.items()):
+        for date, data in set(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
@@ -239,7 +239,7 @@ class QueryEngine:
         price_matches = set()
 
         # look through prices
-        for price, data in list(self.prices.items()):
+        for price, data in set(self.prices.items()):
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = int(price_str)
@@ -270,7 +270,7 @@ class QueryEngine:
         date_matches = set()
 
         # look through dates
-        for date, data in list(self.pdates.items()):
+        for date, data in set(self.pdates.items()):
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
