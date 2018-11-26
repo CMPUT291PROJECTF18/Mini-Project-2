@@ -10,7 +10,7 @@ This code is open source, and is `available on GitHub`_.
    :caption: Contents:
 
    Overview<readme>
-   Shell Startup Command Line Usage<commands>
+   Command Line Usage<commands>
 
 
 Indices and tables
