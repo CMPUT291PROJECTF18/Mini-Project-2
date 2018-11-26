@@ -27,10 +27,7 @@ Requirements
 Overview
 ========
 
-mini-project-2 is a...
-
-TODO: finish
-
+mini-project-2 is a python command-line application that interfaces with the Berkeley DB Python 3 package (bsddb3). Using the program users can specify queries written in a query language grammar. These queries are processed by the program and the associated data is retrieved and presented to the user.
 
 Installation
 ============
