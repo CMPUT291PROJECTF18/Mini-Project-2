@@ -12,9 +12,8 @@ from pathlib import Path
 import datetime
 import re
 from logging import getLogger
+import xml.etree.ElementTree as ElementTree
 
-import lxml
-from bs4 import BeautifulSoup
 import bsddb3
 
 __log__ = getLogger(__name__)
@@ -312,5 +311,6 @@ def get_aid(data_str: str) -> str:
 
 def get_title(ad: str) -> str:
     """From a raw ad records xml extract and return the ads title"""
-    soup = BeautifulSoup(ad, "lxml")
-    return soup.find("ti").getText()
+    elem = ElementTree.fromstring(ad)
+    root = ElementTree.ElementTree(elem).getroot()
+    return root.find("ti").text
