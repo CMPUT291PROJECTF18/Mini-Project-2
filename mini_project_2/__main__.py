@@ -4,7 +4,6 @@
 """argparse and entry point script for mini-project-2"""
 
 import argparse
-import datetime
 import os
 import re
 import sys
