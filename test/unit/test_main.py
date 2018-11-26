@@ -47,7 +47,7 @@ def test_get_parser():
                              "price<20",
                              "price>=20",
                              "location=edmonton date=2018/11/07",
-                             "cat=artcollectibles term=camera",
+                             "cat=art-collectibles term=camera",
                              "term=camera date>=2018/11/05 date<=2018/11/07 price>20 price<40"
                          ]
                          )
