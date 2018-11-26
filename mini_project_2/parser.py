@@ -97,7 +97,9 @@ def parse_prices(xml_string):
             aid = ad.find("aid").text
             category = ad.find("cat").text
             location = ad.find("loc").text
-            prices.append(price + ":" + aid + "," + category + "," + location)
+            padding = " " * (12 - len(price))
+            prices.append(padding + price + ":" + aid + "," + category + "," +
+                          location)
 
     price_string = ""
     for i, price in enumerate(prices):
