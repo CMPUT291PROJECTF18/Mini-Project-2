@@ -93,9 +93,11 @@ class QueryEngine:
     def delete_non_matching_aids(self, matching_aids):
         """remove ad(s) from the ads index that do not have a aid contained
         within ``matching_aids``"""
-        aids_to_delete = [aid for aid in self.ads.keys() if aid not in [bytes(key, "utf-8") for key in matching_aids]]
-        for aid in aids_to_delete:
-            self.ads.__delitem__(aid)
+        for aid in self.ads.keys():
+            clean_aid = aid.decode("utf-8").strip()
+            if clean_aid not in matching_aids:
+                self.ads.pop(aid)
+
         # TODO: we should also cleanup other indexes here aswell
         # this isn't needed functionally, but, if done would likely lead to
         # cleaner code.
@@ -125,9 +127,9 @@ class QueryEngine:
             if term_str.lower() in searching_terms:
                 __log__.info("found matching db_term: {} data: {}".format(term_str, data_str))
                 # get the aid from the terms index
-                term_matches.add(self.terms[term].decode("utf-8"))
+                term_matches.add(self.terms[term].decode("utf-8").strip())
             else:
-                self.terms.__delitem__(term)
+                self.terms.pop(term)
 
         for aid in term_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -161,7 +163,7 @@ class QueryEngine:
                 __log__.debug("found matching db_location: {} price: {} data: {}".format(db_category, price_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                self.prices.pop(price)
 
         # look through dates
         for date, data in set(self.pdates.items()):
@@ -172,7 +174,7 @@ class QueryEngine:
                 __log__.debug("found matching db_location: {} date: {} data: {}".format(db_category, date_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                self.pdates.pop(date)
 
         for aid in category_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -205,7 +207,7 @@ class QueryEngine:
                 __log__.debug("found matching location: {} price: {} data: {}".format(db_location, price_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                self.prices.pop(price)
 
         # look through dates
         for date, data in set(self.pdates.items()):
@@ -216,7 +218,7 @@ class QueryEngine:
                 __log__.debug("found matching location: {} date: {} data: {}".format(db_location, date_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                self.pdates.pop(date)
 
         for aid in location_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -246,7 +248,7 @@ class QueryEngine:
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                self.prices.pop(price)
 
         for aid in price_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -277,7 +279,7 @@ class QueryEngine:
                 __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
                 date_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                self.pdates.pop(date)
 
         for aid in date_matches:
             if self.ads.has_key(bytes(aid, "utf-8")):
@@ -306,7 +308,7 @@ def get_category(data_str: str) -> str:
 def get_aid(data_str: str) -> str:
     """Get the ad ID field from either a ``prices`` or ``pdates`` index's
     key's data"""
-    return data_str.split(",")[0]
+    return data_str.split(",")[0].strip()
 
 
 def get_title(ad: str) -> str:
