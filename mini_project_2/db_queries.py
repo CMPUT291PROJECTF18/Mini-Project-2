@@ -3,16 +3,14 @@
 
 """Database querying engine for part3"""
 
-import tempfile
-import shutil
-import os
-import operator
-from pathlib import Path
-
 import datetime
-import re
-from logging import getLogger
+import operator
+import os
+import shutil
+import tempfile
 import xml.etree.ElementTree as ElementTree
+from logging import getLogger
+from pathlib import Path
 
 import bsddb3
 
@@ -93,9 +91,11 @@ class QueryEngine:
     def delete_non_matching_aids(self, matching_aids):
         """remove ad(s) from the ads index that do not have a aid contained
         within ``matching_aids``"""
-        aids_to_delete = [aid for aid in self.ads.keys() if aid not in [bytes(key, "utf-8") for key in matching_aids]]
-        for aid in aids_to_delete:
-            self.ads.__delitem__(aid)
+        for aid in self.ads.keys():
+            clean_aid = aid.decode("utf-8").strip()
+            if clean_aid not in matching_aids:
+                self.ads.pop(aid)
+
         # TODO: we should also cleanup other indexes here aswell
         # this isn't needed functionally, but, if done would likely lead to
         # cleaner code.
@@ -105,32 +105,34 @@ class QueryEngine:
         word within the title or description fields"""
         __log__.info("starting term query: search_term: {}".format(search_term))
 
-        if search_term.endswith("%"):
-            __log__.debug("wildcard detected in search_term: {}".format(search_term))
-            base_term = search_term[:-1]
-            searching_terms = list((key.decode("utf-8").lower() for key, val in self.terms.items() if re.match(r"{}[a-zA-Z0-9\-_]*".format(base_term), key.decode("utf-8"))))
-        else:
-            searching_terms = [search_term.lower()]
-
-        searching_terms = set(searching_terms)
-
-        __log__.info("running search_term query: searching_terms: {}".format(searching_terms))
-
         term_matches = set()
 
         # look through terms
-        for term, data in set(self.terms.items()):
+        rec = self.terms.first()
+        while True:
+            term, data = rec
             term_str = term.decode("utf-8")
             data_str = data.decode("utf-8")
-            if term_str.lower() in searching_terms:
-                __log__.info("found matching db_term: {} data: {}".format(term_str, data_str))
-                # get the aid from the terms index
-                term_matches.add(self.terms[term].decode("utf-8"))
+            if search_term.endswith("%"):
+                base_term = search_term[:-1]
+                term_check = term_str.lower().startswith(base_term.lower())
             else:
-                self.terms.__delitem__(term)
+                term_check = term_str.lower() == search_term
+            if term_check:
+                __log__.debug("found matching db_term: {} data: {}".format(term_str, data_str))
+                # get the aid from the terms index
+                term_matches.add(data_str.strip())
+            else:
+                # TODO: remove?
+                pass
+
+            try:
+                rec = self.terms.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         for aid in term_matches:
-            if self.ads.has_key(bytes(aid, "utf-8")):
+            if bytes(aid, "utf-8") in self.ads:
                 if self.full_output:
                     __log__.info("found matching term: search_term: {} aid: {} ad: {}".format(search_term, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
@@ -153,7 +155,9 @@ class QueryEngine:
         category_matches = set()
 
         # look through prices
-        for price, data in set(self.prices.items()):
+        rec = self.prices.first()
+        while True:
+            price, data = rec
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
@@ -161,10 +165,17 @@ class QueryEngine:
                 __log__.debug("found matching db_location: {} price: {} data: {}".format(db_category, price_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                # self.prices.pop(price)  # TODO
+                pass
+            try:
+                rec = self.prices.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         # look through dates
-        for date, data in set(self.pdates.items()):
+        rec = self.pdates.first()
+        while True:
+            date, data = rec
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_category = get_category(data_str)
@@ -172,10 +183,15 @@ class QueryEngine:
                 __log__.debug("found matching db_location: {} date: {} data: {}".format(db_category, date_str, data_str))
                 category_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                # self.pdates.pop(date)  # TODO
+                pass
+            try:
+                rec = self.pdates.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         for aid in category_matches:
-            if self.ads.has_key(bytes(aid, "utf-8")):
+            if bytes(aid, "utf-8") in self.ads:
                 if self.full_output:
                     __log__.info("found matching category: search_category: {} aid: {} ad: {}".format(search_category, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
@@ -197,7 +213,9 @@ class QueryEngine:
         location_matches = set()
 
         # look through prices
-        for price, data in set(self.prices.items()):
+        rec = self.prices.first()
+        while True:
+            price, data = rec
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
@@ -205,10 +223,17 @@ class QueryEngine:
                 __log__.debug("found matching location: {} price: {} data: {}".format(db_location, price_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                # self.prices.pop(price)  # TODO
+                pass
+            try:
+                rec = self.prices.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         # look through dates
-        for date, data in set(self.pdates.items()):
+        rec = self.pdates.first()
+        while True:
+            date, data = rec
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_location = get_location(data_str)
@@ -216,10 +241,15 @@ class QueryEngine:
                 __log__.debug("found matching location: {} date: {} data: {}".format(db_location, date_str, data_str))
                 location_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                # self.pdates.pop(date)  # TODO
+                pass
+            try:
+                rec = self.pdates.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         for aid in location_matches:
-            if self.ads.has_key(bytes(aid, "utf-8")):
+            if bytes(aid, "utf-8") in self.ads:
                 if self.full_output:
                     __log__.info("found matching location: search_location: {} aid: {} ad: {}".format(search_location, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
@@ -238,7 +268,9 @@ class QueryEngine:
         price_matches = set()
 
         # look through prices
-        for price, data in set(self.prices.items()):
+        rec = self.prices.first()
+        while True:
+            price, data = rec
             price_str = price.decode("utf-8")
             data_str = data.decode("utf-8")
             db_price = int(price_str)
@@ -246,10 +278,15 @@ class QueryEngine:
                 __log__.debug("found valid price: {} data: {}".format(price_str, data_str))
                 price_matches.add(get_aid(data_str))
             else:
-                self.prices.__delitem__(price)
+                # self.prices.pop(price)  # TODO
+                pass
+            try:
+                rec = self.prices.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         for aid in price_matches:
-            if self.ads.has_key(bytes(aid, "utf-8")):
+            if bytes(aid, "utf-8") in self.ads:
                 if self.full_output:
                     __log__.info("found matching price: {} aid: {} ad: {}".format(search_price, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
@@ -268,8 +305,9 @@ class QueryEngine:
 
         date_matches = set()
 
-        # look through dates
-        for date, data in set(self.pdates.items()):
+        rec = self.pdates.first()
+        while True:
+            date, data = rec
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
@@ -277,10 +315,15 @@ class QueryEngine:
                 __log__.debug("found valid date: {} data: {}".format(date_str, data_str))
                 date_matches.add(get_aid(data_str))
             else:
-                self.pdates.__delitem__(date)
+                # self.pdates.pop(date)  # TODO
+                pass
+            try:
+                rec = self.pdates.next()
+            except bsddb3.db.DBNotFoundError:
+                break
 
         for aid in date_matches:
-            if self.ads.has_key(bytes(aid, "utf-8")):
+            if bytes(aid, "utf-8") in self.ads:
                 if self.full_output:
                     __log__.info("found matching date: {} aid: {} ad: {}".format(search_date, aid, self.ads[bytes(aid, "utf-8")].decode("utf-8")))
                 else:
@@ -306,7 +349,7 @@ def get_category(data_str: str) -> str:
 def get_aid(data_str: str) -> str:
     """Get the ad ID field from either a ``prices`` or ``pdates`` index's
     key's data"""
-    return data_str.split(",")[0]
+    return data_str.split(",")[0].strip()
 
 
 def get_title(ad: str) -> str:
