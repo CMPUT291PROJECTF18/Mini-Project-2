@@ -3,16 +3,15 @@
 
 """Database querying engine for part3"""
 
-import tempfile
-import shutil
-import os
-import operator
-from pathlib import Path
-
 import datetime
+import operator
+import os
 import re
-from logging import getLogger
+import shutil
+import tempfile
 import xml.etree.ElementTree as ElementTree
+from logging import getLogger
+from pathlib import Path
 
 import bsddb3
 
@@ -270,8 +269,13 @@ class QueryEngine:
 
         date_matches = set()
 
-        # look through dates
-        for date, data in set(self.pdates.items()):
+        rec = self.pdates.first()
+        while rec:
+            date, data = rec
+            try:
+                rec = self.pdates.next()
+            except:
+                break
             date_str = date.decode("utf-8")
             data_str = data.decode("utf-8")
             db_date = parse_date(date_str)
