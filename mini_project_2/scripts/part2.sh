@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sort -t : -u $1 | ~/part2/break.pl | db_load -T -t $2 $3
+sort -t : -u $1 | ~/part2/break.pl | db_load -c duplicates=1 -T -t $2 $3
