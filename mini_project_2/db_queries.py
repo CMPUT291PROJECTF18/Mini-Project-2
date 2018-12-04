@@ -115,10 +115,10 @@ class QueryEngine:
             data_str = data.decode("utf-8")
             if search_term.endswith("%"):
                 base_term = search_term[:-1]
-                check = term_str.lower().startswith(base_term.lower())
+                term_check = term_str.lower().startswith(base_term.lower())
             else:
-                check = term_str.lower() == search_term
-            if check:
+                term_check = term_str.lower() == search_term
+            if term_check:
                 __log__.info("found matching db_term: {} data: {}".format(term_str, data_str))
                 # get the aid from the terms index
                 term_matches.add(data_str.strip())
