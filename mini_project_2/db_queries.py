@@ -155,7 +155,7 @@ class QueryEngine:
         category_matches = set()
 
         # look through prices
-        rec = self.prices.next()
+        rec = self.prices.first()
         while True:
             price, data = rec
             price_str = price.decode("utf-8")
